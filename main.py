@@ -1,15 +1,17 @@
-from typing import Annotated
+import os
+import shutil
 
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, UploadFile
 
 app = FastAPI()
 
-
-@app.post("/files/")
-async def create_file(file: Annotated[bytes, File()]):
-    return {"file_size": len(file)}
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
-@app.post("/uploadfile/")
-async def create_upload_file(file: UploadFile):
-    return {"filename": file.filename}
+@app.post("/upload/")
+async def upload_document(file: UploadFile):
+    file_path = os.path.join(UPLOAD_DIR, file.filename)
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    return {"filename": file.filename, "status": "uploaded"}
