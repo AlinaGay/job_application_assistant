@@ -8,6 +8,8 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_anthropic import ChatAnthropic
 from langchain_community.vectorstores import FAISS
 
+from prompts import cover_letter_prompt
+
 
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
@@ -34,18 +36,21 @@ def process_resume(file_path: str) -> int:
     return len(chunks)
 
 
-def generate_cover_letter(about_me_text: str, job_text) -> str:
+def generate_cover_letter(company_text: str) -> str:
     if not vector_store:
         return "Please, upload information about you."
 
-    query = f"Experience, skills and values for job position: {job_text[:200]}"
+    query = f"Experience, skills and values for job position: {
+        company_text[:200]}"
     docs = vector_store.similarity_search(query, k=4)
     resume_context = "\n\n".join(doc.page_content for doc in docs)
+    system_text = cover_letter_prompt(
+        company_text, about_me_text=resume_context)
 
     messages = [
         {
             "role": "system",
-            "content": True
+            "content": system_text
         },
         {
             "role": "user",
