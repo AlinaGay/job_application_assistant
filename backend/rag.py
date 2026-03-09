@@ -32,3 +32,26 @@ def process_resume(file_path: str) -> int:
     vector_store = FAISS.from_documents(chunks, embeddings)
 
     return len(chunks)
+
+
+def generate_cover_letter(about_me_text: str, job_text) -> str:
+    if not vector_store:
+        return "Please, upload information about you."
+
+    query = f"Experience, skills and values for job position: {job_text[:200]}"
+    docs = vector_store.similarity_search(query, k=4)
+    resume_context = "\n\n".join(doc.page_content for doc in docs)
+
+    messages = [
+        {
+            "role": "system",
+            "content": True
+        },
+        {
+            "role": "user",
+            "content": "Write a cover letter."
+        }
+    ]
+
+    response = llm.invoke(messages)
+    return response.context

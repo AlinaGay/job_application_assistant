@@ -1,10 +1,11 @@
 import os
 import shutil
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
-
+load_dotenv()
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
