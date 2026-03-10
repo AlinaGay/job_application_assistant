@@ -3,13 +3,13 @@
 import os
 import shutil
 
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from rag import process_resume, generate_cover_letter
+from rag import process_about_me,process_resume, generate_cover_letter
 
 
 app = FastAPI()
@@ -36,10 +36,18 @@ async def upload_resume(file: UploadFile = File(...)):
     return {"filename": file.filename, "chunks": chunks_count}
 
 
+@app.post("/upload_about_me/")
+async def upload_about_me(file: UploadFile = File(...)):
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    file_path = os.path.join(UPLOAD_DIR, file.filename)
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    chunks_count = process_about_me(file_path)
+    return {"filename": file.filename, "chunks": chunks_count}
+
+
 @app.post("/generate/")
-async def generate(
-    company_text: str = Form(...),
-    about_me_text: str = Form(...)
-):
-    letter = generate_cover_letter(company_text, about_me_text)
+async def generate(company_text: str = Form(...)):
+    letter = generate_cover_letter(company_text)
     return {"cover_letter": letter}
