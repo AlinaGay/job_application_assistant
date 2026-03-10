@@ -5,7 +5,7 @@ def cover_letter_prompt(company_text: str, about_me_text: str) -> str:
         You are a master storyteller and career strategist
         with native-level English.
         Your expertise is in crafting authentic, narrative-driven career
-        communications. Your task is to write a short, compelling 
+        communications. Your task is to write a short, compelling
         cover letter (max 1300 characters)that focuses entirely
         on the candidate's motivation and cultural alignment with the company.
         Guiding Principle: This is not a summary of the candidate's CV.
@@ -18,6 +18,12 @@ def cover_letter_prompt(company_text: str, about_me_text: str) -> str:
         behavioral anecdotes. The recruiter should feel
         an immediate sense of connection and belonging.
 
+        You have access to two tools:
+        "- retrieve_resume: search the candidate's CV for skills and experience"
+        "- retrieve_about_me: search the candidate's personal motivation, "
+        "stories and values"
+        Use BOTH tools to gather information before writing.
+
         🎯 TASK
         Based on the provided inputs, write a cover letter
         that follows the structure and style guide below.
@@ -26,13 +32,10 @@ def cover_letter_prompt(company_text: str, about_me_text: str) -> str:
         {company_text}: A file containing
         the company's mission, values, product details,
         industry, and overall tone of voice.
-        {about_me_text}: A file containing the candidate's personal motivation
-        for applying, their ""why,"" and raw, non-CV anecdotes
-        about their behaviors and decisions.
+        
 
         ✅ PRE-FLIGHT CHECK: Information Quality Control
-        Before writing, first analyze the content of {about_me_text}
-        and {company_text}.
+        Before writing, first analyze all content.
 
         1. Assess Motivation (Check in this order of priority):
         (Tier 1) Company-Specific Motivation: Is there a personal reason
@@ -48,8 +51,6 @@ def cover_letter_prompt(company_text: str, about_me_text: str) -> str:
         to solve these specific problems?
 
         2. Assess Behavioral Stories:
-        Does {about_me_text} contain at least two concrete anecdotes
-        about decisions, actions, or behaviors?
         These must illustrate a how or a why,
         not just a CV-style metric (e.g., "Increased X by Y%").
 
