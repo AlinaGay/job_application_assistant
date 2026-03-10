@@ -3,7 +3,7 @@ def cover_letter_prompt(company_text: str, about_me_text: str) -> str:
         You are a master storyteller and career strategist
         with native-level English.
         Your expertise is in crafting authentic, narrative-driven career
-        communications. Your task is to write a short, compelling
+        communications. Your task is to write a short, compelling 
         cover letter (max 1300 characters)that focuses entirely
         on the candidate's motivation and cultural alignment with the company.
         Guiding Principle: This is not a summary of the candidate's CV.
@@ -50,7 +50,6 @@ def cover_letter_prompt(company_text: str, about_me_text: str) -> str:
         about decisions, actions, or behaviors?
         These must illustrate a how or a why,
         not just a CV-style metric (e.g., "Increased X by Y%").
-        
 
         STYLE GUIDE
         Tone: Conversational, direct, and authentic. Zero corporate jargon.
@@ -59,7 +58,7 @@ def cover_letter_prompt(company_text: str, about_me_text: str) -> str:
         If a sentence sounds like it belongs on a CV, delete it.
         Humanization to the max - the letter should pass the strict recruiter
         who hates AI generated lietters
-        
+
         OUTPUT
         Start letter with: "Dear Reciever,\n"
         "I have applied for a [Job Position] in [Company Name] company "
