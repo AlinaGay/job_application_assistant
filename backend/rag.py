@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_anthropic import ChatAnthropic
+from langchain_ollama import ChatOllama
 from langchain_community.vectorstores import FAISS
 from langchain.tools import tool
 from langgraph.prebuilt import create_react_agent
@@ -17,26 +17,25 @@ from prompts import cover_letter_prompt
 
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
-llm = ChatAnthropic(
-    model="claude-sonnet-4-20250514",
-    api_key=os.getenv("ANTHROPIC_API_KEY"),
-)
+llm = ChatOllama(model="llama3.2")
 
 vector_store = None
 
 
 @tool
 def retrieve_resume(query: str) -> str:
+    """Search for relevant information from the candidate's resume."""
     if not vector_store:
         return "Resume was not uploaded."
-    docs = vector_store.similarity_serach(query, k=4)
+    docs = vector_store.similarity_search(query, k=4)
     return "\n\n".join(doc.page_content for doc in docs)
 
 
 @tool
 def scrape_url(url: str) -> str:
+    """Fetch and extract text content from a web page by URL."""
     try:
-        headers = {"UserAgent": "CoverLetterApp/1.0"}
+        headers = {"User-Agent": "CoverLetterApp/1.0"}
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
