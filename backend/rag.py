@@ -1,12 +1,16 @@
+# rag.py
+
 import os
 import requests
 
-from bs4 import BeutifulSoap
+from bs4 import BeautifulSoup
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_anthropic import ChatAnthropic
 from langchain_community.vectorstores import FAISS
+from langchain.tools import tool
+from langgraph.prebuilt import create_react_agent
 
 from prompts import cover_letter_prompt
 
@@ -19,6 +23,35 @@ llm = ChatAnthropic(
 )
 
 vector_store = None
+
+
+@tool
+def retrieve_resume(query: str) -> str:
+    if not vector_store:
+        return "Resume was not uploaded."
+    docs = vector_store.similarity_serach(query, k=4)
+    return "\n\n".join(doc.page_content for doc in docs)
+
+
+@tool
+def scrape_url(url: str) -> str:
+    try:
+        headers = {"UserAgent": "CoverLetterApp/1.0"}
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        for tag in soup(["script", "style", "nav", "footer", "header"]):
+            tag.decompose()
+
+        text = soup.get_text(separator="\n", strip=True)
+        return text[:5000] if len(text) > 100 else "Failed to extract text."
+    except Exception as error:
+        return f"Loading error: {str(error)}"
+
+
+tools = [retrieve_resume, scrape_url]
+agent = create_react_agent(llm, tools)
 
 
 def process_resume(file_path: str) -> int:
@@ -36,27 +69,26 @@ def process_resume(file_path: str) -> int:
     return len(chunks)
 
 
-def generate_cover_letter(company_text: str) -> str:
+def generate_cover_letter(company_text: str, about_me_text: str) -> str:
     if not vector_store:
         return "Please, upload information about you."
 
-    query = f"Experience, skills and values for job position: {
-        company_text[:200]}"
-    docs = vector_store.similarity_search(query, k=4)
-    resume_context = "\n\n".join(doc.page_content for doc in docs)
     system_text = cover_letter_prompt(
-        company_text, about_me_text=resume_context)
+        company_text=company_text,
+        about_me_text=about_me_text
+    )
 
-    messages = [
-        {
-            "role": "system",
-            "content": system_text
-        },
-        {
-            "role": "user",
-            "content": "Write a cover letter."
-        }
-    ]
+    result = agent.invoke({
+        "messages": [
+            {
+                "role": "system",
+                "content": system_text
+            },
+            {
+                "role": "user",
+                "content": "Write a cover letter."
+            }
+        ]
+    })
 
-    response = llm.invoke(messages)
-    return response.context
+    return result["messages"][-1].content

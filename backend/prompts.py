@@ -1,3 +1,5 @@
+# prompts.py
+
 def cover_letter_prompt(company_text: str, about_me_text: str) -> str:
     return (f"""
         You are a master storyteller and career strategist
