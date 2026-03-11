@@ -9,7 +9,12 @@ import shutil
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from rag import process_about_me,process_resume, generate_cover_letter
+from rag import (
+    generate_cover_letter,
+    process_about_me,
+    process_resume,
+    scrape_url
+)
 
 
 app = FastAPI()
@@ -47,7 +52,18 @@ async def upload_about_me(file: UploadFile = File(...)):
     return {"filename": file.filename, "chunks": chunks_count}
 
 
+@app.post("/scrape/")
+async def scrape(url: str = Form(...)):
+    text = scrape_url(url)
+    if text:
+        return {"success": True, "text": text}
+    return {"success": False, "text": ""}
+
+
 @app.post("/generate/")
-async def generate(company_text: str = Form(...)):
-    letter = generate_cover_letter(company_text)
+async def generate(
+    company_text: str = Form(...),
+    job_text: str = Form(...),
+):
+    letter = generate_cover_letter(company_text, job_text)
     return {"cover_letter": letter}
