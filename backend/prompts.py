@@ -1,6 +1,6 @@
 # prompts.py
 
-def cover_letter_prompt(company_text: str) -> str:
+def cover_letter_prompt(company_text: str, job_text: str) -> str:
     return (f"""
         You are a master storyteller and career strategist
         with native-level English.
@@ -32,7 +32,7 @@ def cover_letter_prompt(company_text: str) -> str:
         {company_text}: A file containing
         the company's mission, values, product details,
         industry, and overall tone of voice.
-        
+        {job_text}: JOB DESCRIPTION.
 
         ✅ PRE-FLIGHT CHECK: Information Quality Control
         Before writing, first analyze all content.

@@ -53,6 +53,23 @@ def process_about_me(file_path: str) -> str:
     return len(chunks)
 
 
+def scrape_url(url: str) -> str:
+    """Fetch and extract text content from a web page by URL."""
+    try:
+        headers = {"User-Agent": "CoverLetterApp/1.0"}
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        for tag in soup(["script", "style", "nav", "footer", "header"]):
+            tag.decompose()
+
+        text = soup.get_text(separator="\n", strip=True)
+        return text[:5000] if len(text) > 100 else "Failed to extract text."
+    except Exception as error:
+        return f"Loading error: {str(error)}"
+
+
 @tool
 def retrieve_resume(query: str) -> str:
     """Search for relevant information from the candidate's resume."""
@@ -71,35 +88,17 @@ def retrieve_about_me(query: str) -> str:
     return "\n\n".join(doc.page_content for doc in docs)
 
 
-@tool
-def scrape_url(url: str) -> str:
-    """Fetch and extract text content from a web page by URL."""
-    try:
-        headers = {"User-Agent": "CoverLetterApp/1.0"}
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        for tag in soup(["script", "style", "nav", "footer", "header"]):
-            tag.decompose()
-
-        text = soup.get_text(separator="\n", strip=True)
-        return text[:5000] if len(text) > 100 else "Failed to extract text."
-    except Exception as error:
-        return f"Loading error: {str(error)}"
-
-
-tools = [retrieve_resume, retrieve_about_me, scrape_url]
+tools = [retrieve_resume, retrieve_about_me]
 agent = create_react_agent(llm, tools)
 
 
-def generate_cover_letter(company_text: str) -> str:
+def generate_cover_letter(company_text: str, job_text: str) -> str:
     if not resume_store:
         return "Please upload your resume first."
     if not about_me_store:
         return "Please upload About_me file first."
 
-    system_text = cover_letter_prompt(company_text=company_text)
+    system_text = cover_letter_prompt(company_text=company_text, job_text=job_text)
 
     result = agent.invoke({
         "messages": [
