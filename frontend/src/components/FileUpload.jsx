@@ -1,5 +1,9 @@
 // FileUpload.jsx
-
+/**
+ * Reusable file upload component.
+ * Uploads a file to the specified backend endpoint
+ * and shows a success message.
+ */
 import { useState } from 'react'
 
 const API = "http://localhost:8000";
