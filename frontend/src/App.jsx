@@ -2,34 +2,25 @@
 
 import { useState } from 'react'
 
+import FileUpload from "./components/FileUpload";
+import DataInput from "./components/DataInput";
+import CoverLetterResult from "./components/CoverLetterResult";
+import "./App.css";
+
 const API = "http://localhost:8000";
 
 
 function App() {
-    const [resumeUploaded, setResumeUploaded] = useState(false);
-    const [aboutMeUploaded, setAboutMeUploaded] = useState(false);
     const [companyText, setCompanyText] = useState("");
     const [jobText, setJobText] = useState("");
     const [coverLetter, setCoverLetter] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleFileUpload = async (e, endpoint, onSuccess) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const res = await fetch(`${API}/${endpoint}/`, {
-            method: "POST",
-            body: formData,
-        });
-        if (res.ok) onSuccess(true);
-    };
+    
 
     const handleGenerate = async () => {
-        if (!resumeUploaded || !aboutMeUploaded || !companyText || !jobText) {
-            alert("Please upload all files and fill in all fields.");
+        if (!companyText || !jobText) {
+            alert("Please fill in all fields and upload all files.");
             return;
         }
 
@@ -55,33 +46,23 @@ function App() {
     };
 
     return (
-      <div style={{ maxWidth: "700px", margin: "0 auto", padding: "20px" }}>
+      <div className="app">
         <h1>Job Application Assistant</h1>
   
         {/* Resume */}
-        <div style={{ marginBottom: "20px" }}>
-          <h3>Resume (PDF)</h3>
-          <input
-            type="file"
-            accept="application/pdf"
-            onChange={(e) => handleFileUpload(e, "upload_resume", setResumeUploaded)}
-          />
-          {resumeUploaded && <p style={{ color: "green" }}>Resume uploaded!</p>}
-        </div>
+        <FileUpload
+          label="Resume"
+          accept="application/pdf"
+          endpoint="upload_resume"
+        />
   
         {/* About Me */}
-        <div style={{ marginBottom: "20px" }}>
-          <h3>About Me (PDF or TXT)</h3>
-          <p style={{ color: "gray", fontSize: "14px" }}>
-            Your motivation, personal stories, values — anything beyond the resume
-          </p>
-          <input
-            type="file"
-            accept=".pdf,.txt"
-            onChange={(e) => handleFileUpload(e, "upload_about_me", setAboutMeUploaded)}
-          />
-          {aboutMeUploaded && <p style={{ color: "green" }}>About Me uploaded!</p>}
-        </div>
+        <FileUpload
+          label="About me"
+          hint="Your motivation, personal stories, values — anything beyond the resume"
+          accept=".pdf, .txt"
+          endpoint="upload_about_me"
+        />
   
         {/* Company info */}
         <DataInput
@@ -101,26 +82,14 @@ function App() {
   
         {/* Generate */}
         <button
+          className="generate-btn"
           onClick={handleGenerate}
           disabled={loading}
-          style={{ padding: "10px 20px", fontSize: "16px" }}
         >
           {loading ? "Generating..." : "Generate Cover Letter"}
         </button>
   
-        {/* Result */}
-        {coverLetter && (
-          <div style={{ marginTop: "30px" }}>
-            <h2>Your Cover Letter</h2>
-            <textarea rows={15} style={{ width: "100%" }} value={coverLetter} readOnly />
-            <button
-              onClick={() => navigator.clipboard.writeText(coverLetter)}
-              style={{ marginTop: "10px", padding: "8px 16px" }}
-            >
-              Copy to Clipboard
-            </button>
-          </div>
-        )}
+        <CoverLetterResult coverLetter={coverLetter} />
       </div>
     );
 }
