@@ -132,4 +132,4 @@ def clean_cover_letter(text: str) -> str:
             text = text[:idx + len(marker)]
             break
     
-    return text.split()
+    return text.strip()

@@ -14,9 +14,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 from rag import (
+    clean_cover_letter,
     generate_cover_letter,
     process_about_me,
     process_resume,
@@ -78,16 +81,35 @@ async def generate(
 
 @app.post("/download_pdf/")
 async def download_pdf(cover_letter: str = Form(...)):
+    cleaned_letter = clean_cover_letter(cover_letter)
+    font_dir = os.path.join(BASE_DIR, "fonts")
+    pdfmetrics.registerFont(TTFont("EBGaramond", os.path.join(font_dir, "EBGaramond-Regular.ttf")))
+    pdfmetrics.registerFont(TTFont("EBGaramond-Bold", os.path.join(font_dir, "EBGaramond-Bold.ttf")))
+    pdfmetrics.registerFont(TTFont("EBGaramond-Italic", os.path.join(font_dir, "EBGaramond-Italic.ttf")))
+
     os.makedirs(UPLOAD_DIR, exist_ok=True)
     pdf_path = os.path.join(UPLOAD_DIR, "cover_letter.pdf")
 
-    doc = SimpleDocTemplate(pdf_path, pagesize=A4)
-    styles = getSampleStyleSheet()
+    doc = SimpleDocTemplate(
+        pdf_path,
+        pagesize=A4,
+        leftMargin=72,
+        rightMargin=72,
+        topMargin=72,
+        bottomMargin=72,
+    )
+    style = ParagraphStyle(
+        "CoverLetter",
+        fontName="EBGaramond",
+        fontSize=12,
+        leading=18,
+        spaceAfter=6,
+    )
     story = []
 
-    for line in cover_letter.split("\n"):
+    for line in cleaned_letter.split("\n"):
         if line.strip():
-            story.append(Paragraph(line, styles["Normal"]))
+            story.append(Paragraph(line, style))
             story.append(Spacer(1, 6))
         else:
             story.append(Spacer(1, 12))
