@@ -16,7 +16,7 @@ from prompts import cover_letter_prompt
 
 
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-llm = ChatOllama(model="llama3.2")
+llm = ChatOllama(model="llama3.1:8b")
 splitter = RecursiveCharacterTextSplitter(
     chunk_size=1000, chunk_overlap=200
 )

@@ -3,11 +3,18 @@
 import os
 import shutil
 
+from reportlab.lib import pagesizes
+from reportlab.lib import styles
+
 # from dotenv import load_dotenv
 # load_dotenv()
 
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
 
 from rag import (
     generate_cover_letter,
@@ -23,11 +30,11 @@ app.add_middleware(
     allow_origins=["http://localhost:5173"],
     allow_methods=['*'],
     allow_headers=['*'],
+    expose_headers=["Content-Disposition"],
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
-
 
 
 @app.post("/upload_resume/")
@@ -67,3 +74,23 @@ async def generate(
 ):
     letter = generate_cover_letter(company_text, job_text)
     return {"cover_letter": letter}
+
+
+@app.post("/download_pdf/")
+async def download_pdf(cover_letter: str = Form(...)):
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    pdf_path = os.path.join(UPLOAD_DIR, "cover_letter.pdf")
+
+    doc = SimpleDocTemplate(pdf_path, pagesize=A4)
+    styles = getSampleStyleSheet()
+    story = []
+
+    for line in cover_letter.split("\n"):
+        if line.strip():
+            story.append(Paragraph(line, styles["Normal"]))
+            story.append(Spacer(1, 6))
+        else:
+            story.append(Spacer(1, 12))
+
+    doc.build(story)
+    return FileResponse(pdf_path, filename="cover_letter.pdf", media_type="application/pdf")
