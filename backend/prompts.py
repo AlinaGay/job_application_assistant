@@ -1,6 +1,20 @@
 # prompts.py
 
+
 def cover_letter_prompt(company_text: str, job_text: str) -> str:
+    """Build the system prompt for the cover letter generation agent.
+
+    Instructs the LLM to use retrieve_resume and retrieve_about_me tools
+    to gather candidate data, then craft a concise, authentic cover letter
+    aligned with the target company and role.
+
+    Args:
+        company_text: Company description, mission, values and culture.
+        job_text: Job posting with requirements and responsibilities.
+
+    Returns:
+        Formatted system prompt string for the agent.
+    """
     return (f"""
         You are a master storyteller and career strategist
         with native-level English.

@@ -3,12 +3,6 @@
 import os
 import shutil
 
-from reportlab.lib import pagesizes
-from reportlab.lib import styles
-
-# from dotenv import load_dotenv
-# load_dotenv()
-
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -31,8 +25,8 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
-    allow_methods=['*'],
-    allow_headers=['*'],
+    allow_methods=["*"],
+    allow_headers=["*"],
     expose_headers=["Content-Disposition"],
 )
 
@@ -42,6 +36,7 @@ UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 
 @app.post("/upload_resume/")
 async def upload_resume(file: UploadFile = File(...)):
+    """Save uploaded resume PDF and index it into the RAG vector store."""
     os.makedirs(UPLOAD_DIR, exist_ok=True)
     file_path = os.path.join(UPLOAD_DIR, file.filename)
     with open(file_path, "wb") as buffer:
@@ -53,6 +48,7 @@ async def upload_resume(file: UploadFile = File(...)):
 
 @app.post("/upload_about_me/")
 async def upload_about_me(file: UploadFile = File(...)):
+    """Save uploaded about_me file (PDF or TXT) and index it into the RAG vector store."""
     os.makedirs(UPLOAD_DIR, exist_ok=True)
     file_path = os.path.join(UPLOAD_DIR, file.filename)
     with open(file_path, "wb") as buffer:
@@ -64,6 +60,7 @@ async def upload_about_me(file: UploadFile = File(...)):
 
 @app.post("/scrape/")
 async def scrape(url: str = Form(...)):
+    """Attempt to extract text content from a web page by URL."""
     text = scrape_url(url)
     if text:
         return {"success": True, "text": text}
@@ -75,13 +72,24 @@ async def generate(
     company_text: str = Form(...),
     job_text: str = Form(...),
 ):
+    """Generate a cover letter based on company info and job description.
+
+    Requires resume and about_me to be uploaded first.
+    The agent retrieves relevant context from both vector stores.
+    """
     letter = generate_cover_letter(company_text, job_text)
     return {"cover_letter": letter}
 
 
 @app.post("/download_pdf/")
 async def download_pdf(cover_letter: str = Form(...)):
+    """Convert the generated cover letter to a styled PDF with EB Garamond font.
+
+    Cleans the letter text (removes LLM commentary) before rendering.
+    Returns the PDF file for download.
+    """
     cleaned_letter = clean_cover_letter(cover_letter)
+
     font_dir = os.path.join(BASE_DIR, "fonts")
     pdfmetrics.registerFont(TTFont("EBGaramond", os.path.join(font_dir, "EBGaramond-Regular.ttf")))
     pdfmetrics.registerFont(TTFont("EBGaramond-Bold", os.path.join(font_dir, "EBGaramond-Bold.ttf")))

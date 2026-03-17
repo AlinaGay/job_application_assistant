@@ -36,6 +36,7 @@ def _load_and_split(file_path: str):
 
 
 def process_resume(file_path: str) -> int:
+    """Index resume into FAISS vector store for similarity search."""
     global resume_store
 
     chunks = _load_and_split(file_path)
@@ -44,7 +45,8 @@ def process_resume(file_path: str) -> int:
     return len(chunks)
 
 
-def process_about_me(file_path: str) -> str:
+def process_about_me(file_path: str) -> int:
+    """Index about_me document into FAISS vector store for similarity search."""
     global about_me_store
 
     chunks = _load_and_split(file_path)
@@ -72,7 +74,7 @@ def scrape_url(url: str) -> str:
 
 @tool
 def retrieve_resume(query: str) -> str:
-    """Search for relevant information from the candidate's resume."""
+    """Search for relevant experience and skills from the candidate's resume."""
     if not resume_store:
         return "Resume not uploaded."
     docs = resume_store.similarity_search(query, k=4)
@@ -93,6 +95,12 @@ agent = create_react_agent(llm, tools)
 
 
 def generate_cover_letter(company_text: str, job_text: str) -> str:
+    """Generate a cover letter using the ReAct agent.
+
+    The agent autonomously retrieves relevant data from resume
+    and about_me vector stores, then crafts a letter based on
+    company info and job description.
+    """
     if not resume_store:
         return "Please upload your resume first."
     if not about_me_store:
@@ -117,7 +125,11 @@ def generate_cover_letter(company_text: str, job_text: str) -> str:
 
 
 def clean_cover_letter(text: str) -> str:
-    """Remove service text before and after the actual letter."""
+    """Remove service text before and after the actual letter.
+
+    Extracts only the content between 'Dear...' and 'Kind regards, Alina',
+    stripping any LLM commentary or metadata.
+    """
     start_markers = ["Dear"]
     for marker in start_markers:
         idx = text.find(marker)
@@ -131,5 +143,5 @@ def clean_cover_letter(text: str) -> str:
         if idx != -1:
             text = text[:idx + len(marker)]
             break
-    
+
     return text.strip()
