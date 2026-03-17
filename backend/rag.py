@@ -114,3 +114,22 @@ def generate_cover_letter(company_text: str, job_text: str) -> str:
     })
 
     return result["messages"][-1].content
+
+
+def clean_cover_letter(text: str) -> str:
+    """Remove service text before and after the actual letter."""
+    start_markers = ["Dear"]
+    for marker in start_markers:
+        idx = text.find(marker)
+        if idx != -1:
+            text = text[idx:]
+            break
+
+    end_markers = ["Kind regards, Alina", "Kind regards,\nAlina"]
+    for marker in end_markers:
+        idx = text.find(marker)
+        if idx != -1:
+            text = text[:idx + len(marker)]
+            break
+    
+    return text.split()
