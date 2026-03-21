@@ -16,3 +16,12 @@ async def test_upload_resume_success():
     assert response.status_code == 200
     assert response.json()["filename"] == "resume.pdf"
     assert "chunks" in response.json()
+
+
+@pytest.mark.asyncio
+async def test_upload_resume_no_file():
+    """Test that request without file returns 422."""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.post("/upload_resume/")
+    assert response.status_code == 422
