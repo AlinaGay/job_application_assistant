@@ -25,3 +25,19 @@ async def test_upload_resume_no_file():
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.post("/upload_resume/")
     assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_generate_without_resume():
+    """Test that generation fails if no resume uploaded."""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.post(
+            "/generate/",
+            data={
+                "company_text": "Test company",
+                "job_text": "Test job",
+            },
+        )
+    assert response.status_code == 200
+    assert "upload" in response.json()["cover_letter"].lower()
