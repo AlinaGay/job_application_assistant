@@ -55,7 +55,7 @@ def process_about_me(file_path: str) -> int:
     return len(chunks)
 
 
-def scrape_url(url: str) -> str:
+def scrape_url(url: str):
     """Fetch and extract text content from a web page by URL."""
     try:
         headers = {"User-Agent": "CoverLetterApp/1.0"}
@@ -67,9 +67,9 @@ def scrape_url(url: str) -> str:
             tag.decompose()
 
         text = soup.get_text(separator="\n", strip=True)
-        return text[:5000] if len(text) > 100 else "Failed to extract text."
-    except Exception as error:
-        return f"Loading error: {str(error)}"
+        return text[:5000] if len(text) > 100 else None
+    except Exception:
+        return None
 
 
 @tool

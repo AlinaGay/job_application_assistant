@@ -50,7 +50,20 @@ async def test_scrape_invalid_url():
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.post(
             "/scrape/",
-            data={"url": "https://this-url-does-not-exist-12345.com"},
+            data={"url": "http://localhost:99999/nonexistent"},
         )
     assert response.status_code == 200
-    assert response.json()["success"] is True
+    assert response.json()["success"] is False
+
+
+@pytest.mark.asyncio
+async def test_download_pdf():
+    """Test that PDF is generated and returned."""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.post(
+            "/download_pdf/",
+            data={"cover_letter": "Dear Receiver,\n\nTest letter.\n\nKind regards, Alina"},
+        )
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/pdf"
