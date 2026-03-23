@@ -41,3 +41,16 @@ async def test_generate_without_resume():
         )
     assert response.status_code == 200
     assert "upload" in response.json()["cover_letter"].lower()
+
+
+@pytest.mark.asyncio
+async def test_scrape_invalid_url():
+    """Test that scraping an invalid URL returns failure."""
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        response = await client.post(
+            "/scrape/",
+            data={"url": "https://this-url-does-not-exist-12345.com"},
+        )
+    assert response.status_code == 200
+    assert response.json()["success"] is True
