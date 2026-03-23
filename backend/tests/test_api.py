@@ -7,7 +7,9 @@ from main import app
 async def test_upload_resume_success():
     """Test that a PDF file uploads successfully."""
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=transport, base_url="http://test"
+    ) as client:
         with open("tests/fixtures/test_resume.pdf", "rb") as f:
             response = await client.post(
                 "/upload_resume/",
@@ -22,7 +24,9 @@ async def test_upload_resume_success():
 async def test_upload_resume_no_file():
     """Test that request without file returns 422."""
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=transport, base_url="http://test"
+    ) as client:
         response = await client.post("/upload_resume/")
     assert response.status_code == 422
 
@@ -31,7 +35,9 @@ async def test_upload_resume_no_file():
 async def test_generate_without_resume():
     """Test that generation fails if no resume uploaded."""
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=transport, base_url="http://test"
+    ) as client:
         response = await client.post(
             "/generate/",
             data={
@@ -47,7 +53,9 @@ async def test_generate_without_resume():
 async def test_scrape_invalid_url():
     """Test that scraping an invalid URL returns failure."""
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=transport, base_url="http://test"
+    ) as client:
         response = await client.post(
             "/scrape/",
             data={"url": "http://localhost:99999/nonexistent"},
@@ -60,10 +68,15 @@ async def test_scrape_invalid_url():
 async def test_download_pdf():
     """Test that PDF is generated and returned."""
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(
+        transport=transport, base_url="http://test"
+    ) as client:
         response = await client.post(
             "/download_pdf/",
-            data={"cover_letter": "Dear Receiver,\n\nTest letter.\n\nKind regards, Alina"},
+            data={
+                "cover_letter": "Dear Receiver,\n\n"
+                "Test letter.\n\nKind regards, Alina"
+            },
         )
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/pdf"
