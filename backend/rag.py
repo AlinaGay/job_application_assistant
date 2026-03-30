@@ -12,13 +12,14 @@ from langchain_community.vectorstores import FAISS
 from langchain.tools import tool
 from langgraph.prebuilt import create_react_agent
 
+from config import EMBEDDING_MODEL, LLM_MODEL, CHUNK_SIZE, CHUNK_OVERLAP
 from prompts import cover_letter_prompt
 
 
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-llm = ChatOllama(model="llama3.1:8b")
+embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+llm = ChatOllama(model=LLM_MODEL)
 splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000, chunk_overlap=200
+    chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP
 )
 
 resume_store = None
