@@ -13,12 +13,11 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 from rag import (
-    clean_cover_letter,
     generate_cover_letter,
     process_about_me,
-    process_resume,
-    scrape_url
+    process_resume
 )
+from utils import clean_cover_letter, scrape_url
 
 
 app = FastAPI()
