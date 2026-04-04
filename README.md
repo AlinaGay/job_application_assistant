@@ -111,18 +111,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Download EB Garamond font
-
-Download from [Google Fonts](https://fonts.google.com/specimen/EB+Garamond), unzip and copy to `backend/fonts/`:
-
-```
-backend/fonts/
-├── EBGaramond-Regular.ttf
-├── EBGaramond-Bold.ttf
-└── EBGaramond-Italic.ttf
-```
-
-### 5. Start the backend
+### 4. Start the backend
 
 ```bash
 uvicorn main:app --reload
@@ -130,7 +119,7 @@ uvicorn main:app --reload
 
 Backend runs at http://localhost:8000. API docs at http://localhost:8000/docs.
 
-### 6. Set up and start the frontend
+### 5. Set up and start the frontend
 
 In a new terminal:
 
