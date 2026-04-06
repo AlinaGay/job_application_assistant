@@ -1,9 +1,5 @@
 # rag.py
 
-import os
-import requests
-
-from bs4 import BeautifulSoup
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -33,7 +29,6 @@ class RAGservise:
         self.about_me_store = None
         self.agent = self._create_agent()
 
-
     def _load_and_split(self, file_path: str):
         """Load a PDF or TXT file and split into chunks."""
         if file_path.endswith(".pdf"):
@@ -43,64 +38,61 @@ class RAGservise:
         docs = loader.load()
         return self.splitter.split_documents(docs)
 
+    def _index_document(self, file_path: str) -> tuple[FAISS, int]:
+        """Index a document into a new FAISS vector store."""
+        chunks = self._load_and_split(file_path)
+        store = FAISS.from_documents(chunks, self.embeddings)
+        return store, len(chunks)
 
     def process_resume(self, file_path: str) -> int:
         """Index resume into FAISS vector store for similarity search."""
-        global resume_store
+        self.resume_store, count = self._index_document(file_path)
+        return count
 
-        chunks = _load_and_split(file_path)
-        resume_store = FAISS.from_documents(chunks, embeddings)
+    def process_about_me(self, file_path: str) -> int:
+        """Index about_me into FAISS vector store for similarity search."""
+        self.about_me_store, count = self._index_document(file_path)
+        return count
 
-        return len(chunks)
-
-
-    def process_about_me(file_path: str) -> int:
-        """Index about_me document into FAISS vector store for similarity search."""
-        global about_me_store
-
-        chunks = _load_and_split(file_path)
-        about_me_store = FAISS.from_documents(chunks, embeddings)
-
-        return len(chunks)
-
-
-    @tool
-    def retrieve_resume(query: str) -> str:
-        """Search for relevant experience and skills from the candidate's resume."""
-        if not resume_store:
-            return "Resume not uploaded."
-        docs = resume_store.similarity_search(query, k=4)
+    def _retrieve(self, store, query: str, label: str) -> str:
+        """Search a vectore store for relevant documents."""
+        if not store:
+            return f"{label} not uploaded."
+        docs = store.similarity_search(query, k=4)
         return "\n\n".join(doc.page_content for doc in docs)
 
+    def _create_agent(self):
+        """Create the ReAct agent with retrieval tools."""
 
-    @tool
-    def retrieve_about_me(query: str) -> str:
-        """Search for candidate's motivation, personal stories and values."""
-        if not about_me_store:
-            return "About_me not uploaded."
-        docs = about_me_store.similarity_search(query, k=4)
-        return "\n\n".join(doc.page_content for doc in docs)
+        @tool
+        def retrieve_resume(query: str) -> str:
+            """Search for relevant experience and skills from the resume."""
+            return self._retrieve(self.resume_store, query, "Resume")
 
+        @tool
+        def retrieve_about_me(query: str) -> str:
+            """Search for candidate's personal motivation."""
+            return self._retrieve(self.about_me_store, query, "About Me")
 
-    tools = [retrieve_resume, retrieve_about_me]
-    agent = create_react_agent(llm, tools)
+        return create_react_agent(
+            self.llm, [retrieve_resume, retrieve_about_me])
 
-
-    def generate_cover_letter(company_text: str, job_text: str) -> str:
+    def generate_cover_letter(self, company_text: str, job_text: str) -> str:
         """Generate a cover letter using the ReAct agent.
 
         The agent autonomously retrieves relevant data from resume
         and about_me vector stores, then crafts a letter based on
         company info and job description.
         """
-        if not resume_store:
+        if not self.resume_store:
             return "Please upload your resume first."
-        if not about_me_store:
+        if not self.about_me_store:
             return "Please upload About_me file first."
 
-        system_text = cover_letter_prompt(company_text=company_text, job_text=job_text)
+        system_text = cover_letter_prompt(
+            company_text=company_text, job_text=job_text)
 
-        result = agent.invoke({
+        result = self.agent.invoke({
             "messages": [
                 {
                     "role": "system",
@@ -114,3 +106,6 @@ class RAGservise:
         })
 
         return result["messages"][-1].content
+
+
+rag_service = RAGservise()
