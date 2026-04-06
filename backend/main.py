@@ -12,11 +12,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
-from rag import (
-    generate_cover_letter,
-    process_about_me,
-    process_resume
-)
+from rag import rag_service
 from utils import clean_cover_letter, scrape_url
 
 
@@ -41,19 +37,19 @@ async def upload_resume(file: UploadFile = File(...)):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    chunks_count = process_resume(file_path)
+    chunks_count = rag_service.process_resume(file_path)
     return {"filename": file.filename, "chunks": chunks_count}
 
 
 @app.post("/upload_about_me/")
 async def upload_about_me(file: UploadFile = File(...)):
-    """Save uploaded about_me file (PDF or TXT) and index it into the RAG vector store."""
+    """Save uploaded about_me and index it into the RAG vector store."""
     os.makedirs(UPLOAD_DIR, exist_ok=True)
     file_path = os.path.join(UPLOAD_DIR, file.filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    chunks_count = process_about_me(file_path)
+    chunks_count = rag_service.process_about_me(file_path)
     return {"filename": file.filename, "chunks": chunks_count}
 
 
@@ -76,13 +72,13 @@ async def generate(
     Requires resume and about_me to be uploaded first.
     The agent retrieves relevant context from both vector stores.
     """
-    letter = generate_cover_letter(company_text, job_text)
+    letter = rag_service.generate_cover_letter(company_text, job_text)
     return {"cover_letter": letter}
 
 
 @app.post("/download_pdf/")
 async def download_pdf(cover_letter: str = Form(...)):
-    """Convert the generated cover letter to a styled PDF with EB Garamond font.
+    """Convert the cover letter to a styled PDF with EB Garamond font.
 
     Cleans the letter text (removes LLM commentary) before rendering.
     Returns the PDF file for download.
@@ -90,9 +86,14 @@ async def download_pdf(cover_letter: str = Form(...)):
     cleaned_letter = clean_cover_letter(cover_letter)
 
     font_dir = os.path.join(BASE_DIR, "fonts")
-    pdfmetrics.registerFont(TTFont("EBGaramond", os.path.join(font_dir, "EBGaramond-Regular.ttf")))
-    pdfmetrics.registerFont(TTFont("EBGaramond-Bold", os.path.join(font_dir, "EBGaramond-Bold.ttf")))
-    pdfmetrics.registerFont(TTFont("EBGaramond-Italic", os.path.join(font_dir, "EBGaramond-Italic.ttf")))
+    pdfmetrics.registerFont(
+        TTFont("EBGaramond", os.path.join(font_dir, "EBGaramond-Regular.ttf")))
+    pdfmetrics.registerFont(
+        TTFont("EBGaramond-Bold", os.path.join(
+            font_dir, "EBGaramond-Bold.ttf")))
+    pdfmetrics.registerFont(
+        TTFont("EBGaramond-Italic", os.path.join(
+            font_dir, "EBGaramond-Italic.ttf")))
 
     os.makedirs(UPLOAD_DIR, exist_ok=True)
     pdf_path = os.path.join(UPLOAD_DIR, "cover_letter.pdf")
@@ -122,4 +123,5 @@ async def download_pdf(cover_letter: str = Form(...)):
             story.append(Spacer(1, 12))
 
     doc.build(story)
-    return FileResponse(pdf_path, filename="cover_letter.pdf", media_type="application/pdf")
+    return FileResponse(
+        pdf_path, filename="cover_letter.pdf", media_type="application/pdf")
