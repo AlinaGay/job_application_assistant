@@ -1,4 +1,10 @@
 # rag.py
+"""RAG service for document indexing and cover letter generation.
+
+Provides a RAGService class that manages FAISS vector stores
+for resume and about_me documents, and uses a LangGraph ReAct agent
+to generate personalized cover letters.
+"""
 
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -12,7 +18,7 @@ from config import EMBEDDING_MODEL, LLM_MODEL, CHUNK_SIZE, CHUNK_OVERLAP
 from prompts import cover_letter_prompt
 
 
-class RAGservise:
+class RAGServise:
     """Manages document indexing and cover letter generation.
 
     Stores resume and about_me documents in separate FAISS vector stores.
@@ -55,7 +61,7 @@ class RAGservise:
         return count
 
     def _retrieve(self, store, query: str, label: str) -> str:
-        """Search a vectore store for relevant documents."""
+        """Search a vector store for relevant documents."""
         if not store:
             return f"{label} not uploaded."
         docs = store.similarity_search(query, k=4)
@@ -108,4 +114,4 @@ class RAGservise:
         return result["messages"][-1].content
 
 
-rag_service = RAGservise()
+rag_service = RAGServise()

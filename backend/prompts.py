@@ -1,4 +1,5 @@
 # prompts.py
+"""Prompt templates for the cover letter generation agent."""
 
 
 def cover_letter_prompt(company_text: str, job_text: str) -> str:
@@ -33,7 +34,8 @@ def cover_letter_prompt(company_text: str, job_text: str) -> str:
         an immediate sense of connection and belonging.
 
         You have access to two tools:
-        "- retrieve_resume: search the candidate's CV for skills and experience"
+        "- retrieve_resume: search the candidate's CV
+        for skills and experience"
         "- retrieve_about_me: search the candidate's personal motivation, "
         "stories and values"
         Use BOTH tools to gather information before writing.
