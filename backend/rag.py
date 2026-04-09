@@ -5,6 +5,7 @@ Provides a RAGService class that manages FAISS vector stores
 for resume and about_me documents, and uses a LangGraph ReAct agent
 to generate personalized cover letters.
 """
+import json
 
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -112,6 +113,35 @@ class RAGServise:
         })
 
         return result["messages"][-1].content
+
+    def generate_resume(self, job_text: str) -> dict:
+        """Generate a tailored resume as structured JSON.
+
+        The agent retrieves relevant data from the resume store
+        and returns a JSON object with resume sections.
+        """
+        if not self.resume_store:
+            return {"error": "Please upload your resume first."}
+
+        system_text = resume_prompt(job_text=job_text)
+
+        result = self.agent.invoke({
+            "messages": [
+                {"role": "system", "content": system_text},
+                {"role": "user", "content": "Generate a tailored resume as JSON."},
+            ]
+        })
+
+        raw = result["messages"][-1].content
+
+        try:
+            start = raw.find("{")
+            end = raw.rfind("}") + 1
+            if start != -1 and end > start:
+                return json.loads(raw[start:end])
+            return {"error": "Failed to parse resume JSON."}
+        except json.JSONDecodeError:
+            return {"error": "Failed to parse resume JSON."}
 
 
 rag_service = RAGServise()
