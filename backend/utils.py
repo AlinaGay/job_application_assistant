@@ -1,9 +1,12 @@
 # utils.py
 """Utility functions for web scraping and cover letter text processing."""
 
+import copy
+import re
 import requests
 
 from bs4 import BeautifulSoup
+from docx import Document
 
 
 def scrape_url(url: str):
@@ -44,3 +47,23 @@ def clean_cover_letter(text: str) -> str:
             break
 
     return text.strip()
+
+
+def find_placeholder(file_path: str) -> list:
+    """Find all {{PLACEHOLDER}} patterns in a DOCX file."""
+    doc = Document(file_path)
+    pattern = re.compile(r"\{\{(\w+)\}\}")
+    plaseholders = set()
+
+    for para in doc.paragraphs:
+        matches = pattern.findall(para.text)
+        plaseholders.update(matches)
+
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for para in cell.paragraphs:
+                    matches = pattern.findall(para.text)
+                    plaseholders.update(matches)
+
+    return sorted(plaseholders)
