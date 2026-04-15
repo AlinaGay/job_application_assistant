@@ -67,3 +67,9 @@ def find_placeholder(file_path: str) -> list:
                     plaseholders.update(matches)
 
     return sorted(plaseholders)
+
+
+def fill_template(file_path: str, data: dict, output_path: str):
+    """Replace {{PLACEHOLDER}} patterns in a DOCX with actual content."""
+    doc = Document(file_path)
+    pass
