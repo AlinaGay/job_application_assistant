@@ -8,6 +8,8 @@ import requests
 from bs4 import BeautifulSoup
 from docx import Document
 
+from config import NAMESPACE, PLACEHOLDER_PATTERN
+
 
 def scrape_url(url: str):
     """Fetch and extract text content from a web page by URL."""
@@ -52,19 +54,10 @@ def clean_cover_letter(text: str) -> str:
 def find_placeholder(file_path: str) -> list:
     """Find all {{PLACEHOLDER}} patterns in a DOCX file."""
     doc = Document(file_path)
-    pattern = re.compile(r"\{\{(\w+)\}\}")
     plaseholders = set()
 
-    for para in doc.paragraphs:
-        matches = pattern.findall(para.text)
-        plaseholders.update(matches)
-
-    for table in doc.tables:
-        for row in table.rows:
-            for cell in row.cells:
-                for para in cell.paragraphs:
-                    matches = pattern.findall(para.text)
-                    plaseholders.update(matches)
+    for paragraph in _iter_all_paragraphs(doc):
+        plaseholders.update(PLACEHOLDER_PATTERN.findall(paragraph.text))
 
     return sorted(plaseholders)
 
@@ -73,3 +66,14 @@ def fill_template(file_path: str, data: dict, output_path: str):
     """Replace {{PLACEHOLDER}} patterns in a DOCX with actual content."""
     doc = Document(file_path)
     pass
+
+
+def _iter_all_paragraphs(doc):
+    """Yield all paragraphs from the document and its tables."""
+    for paragraph in doc.paragraphs:
+        yield paragraph
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    yield paragraph
