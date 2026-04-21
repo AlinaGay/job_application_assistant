@@ -77,3 +77,16 @@ def _iter_all_paragraphs(doc):
             for cell in row.cells:
                 for paragraph in cell.paragraphs:
                     yield paragraph
+
+
+def _replace_text(paragraph, placeholder: str, replacement: str):
+    """Replace placeholder text, preserving formatting."""
+    for run in paragraph.runs:
+        if placeholder in run.text:
+            run.text = run.text.replace(placeholder, replacement)
+            return
+    if placeholder in paragraph.text and paragraph.runs:
+        paragraph.runs[0].text = paragraph.text.replace(
+            placeholder, replacement)
+        for run in paragraph.runs[1:]:
+            run.text = ""
