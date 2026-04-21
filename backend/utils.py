@@ -90,3 +90,20 @@ def _replace_text(paragraph, placeholder: str, replacement: str):
             placeholder, replacement)
         for run in paragraph.runs[1:]:
             run.text = ""
+
+
+def _insert_paragraph_after(paragraph, text: str):
+    """Copy paragraph formatting and insert a new paragraph with text."""
+    new_para = copy.deepcopy(paragraph._p)
+    runs = new_para.findall(f".//{NAMESPACE}r")
+
+    if runs:
+        first_text = runs[0].find(f"{NAMESPACE}t")
+        if first_text is not None:
+            first_text.text = text
+        for run in runs[1:]:
+            text_elem = run.find(f"{NAMESPACE}t")
+            if text_elem is not None:
+                text_elem.text = ""
+
+    paragraph._p.addnext(new_para)
