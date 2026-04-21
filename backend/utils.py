@@ -62,10 +62,17 @@ def find_placeholder(file_path: str) -> list:
     return sorted(plaseholders)
 
 
-def fill_template(file_path: str, data: dict, output_path: str):
+def fill_template(file_path: str, data: dict, output_path: str,
+                  multiline: bool = True):
     """Replace {{PLACEHOLDER}} patterns in a DOCX with actual content."""
     doc = Document(file_path)
-    pass
+    paragraphs = list(_iter_all_paragraphs(doc))
+
+    for paragraph in paragraphs:
+        if "{{" in paragraph.text:
+            _replace_in_paragraph(paragraph, data, multiline)
+
+    doc.save(output_path)
 
 
 def _iter_all_paragraphs(doc):
@@ -77,6 +84,20 @@ def _iter_all_paragraphs(doc):
             for cell in row.cells:
                 for paragraph in cell.paragraphs:
                     yield paragraph
+
+
+def _replace_in_paragraph(paragraph, data: dict, multiline: bool):
+    """Replace all placeholders in a single paragraph."""
+    for key, value in data.items():
+        placeholder = "{{" + key + "}}"
+        if placeholder not in paragraph.text:
+            continue
+
+        lines = value.split("\n") if multiline else [value]
+        _replace_text(paragraph, placeholder, lines[0])
+
+        for line in reversed(lines[1:]):
+            _insert_paragraph_after(paragraph, line)
 
 
 def _replace_text(paragraph, placeholder: str, replacement: str):
