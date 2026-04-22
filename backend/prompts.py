@@ -85,3 +85,32 @@ def cover_letter_prompt(company_text: str, job_text: str) -> str:
         End letter with: "I'm looking forward to receiving your feedback.\n"
         "Kind regards, Alina\n"
         """)
+
+
+def template_fill_prompt(job_text: str, placeholders: list) -> str:
+    """Build the system prompt for filling resume template placeholders."""
+    placeholders_str = ", ".join(placeholders)
+
+    return (
+        "You are an expert resume writer.\n\n"
+        "You have access to a tool:\n"
+        "- retrieve_resume: search the candidate's full CV\n\n"
+        "A resume template has been uploaded with these placeholders:\n"
+        f"{placeholders_str}\n\n"
+        "Use retrieve_resume to find relevant information, "
+        "then return ONLY a valid JSON object where each key is "
+        "a placeholder name and each value is the text to insert.\n\n"
+        "Example:\n"
+        "{\n"
+        '  "SUMMARY": "Backend Developer with 5 years...",\n'
+        '  "SKILLS": "Python, FastAPI, Docker...",\n'
+        '  "EXPERIENCE": "Built production API serving 10K users..."\n'
+        "}\n\n"
+        "Rules:\n"
+        "- Return ONLY the JSON, no commentary\n"
+        "- Keep all facts accurate\n"
+        "- Tailor content to match the job description\n"
+        "- Use action verbs and quantify results\n"
+        "- Keep text concise to fit on one page\n\n"
+        f"JOB DESCRIPTION:\n{job_text}"
+    )

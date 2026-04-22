@@ -2,7 +2,6 @@
 """Utility functions for web scraping and cover letter text processing."""
 
 import copy
-import re
 import requests
 
 from bs4 import BeautifulSoup
