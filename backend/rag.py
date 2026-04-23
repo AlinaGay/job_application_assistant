@@ -16,7 +16,8 @@ from langchain.tools import tool
 from langgraph.prebuilt import create_react_agent
 
 from config import EMBEDDING_MODEL, LLM_MODEL, CHUNK_SIZE, CHUNK_OVERLAP
-from prompts import cover_letter_prompt
+from prompts import cover_letter_prompt, template_fill_prompt
+from utils import find_placeholder, fill_template
 
 
 class RAGServise:
@@ -116,10 +117,41 @@ class RAGServise:
 
     def fill_resume_template(self, template_path: str, job_text: str,
                              output_path: str) -> dict:
+        """Fill a DOCX resume template with AI-generated content."""
         if not self.resume_store:
             return {"error": "Please upload your resume first."}
 
-        return {}
+        placeholders = find_placeholder(template_path)
+        if not placeholders:
+            return {"error": "No {{PLACEHOLDER}} patterns found in template."}
+        
+        systen_text = template_fill_prompt(
+            job_text=job_text, placeholders=placeholders)
+
+        result = self.agent.invoke({
+            "messages": [
+                {"role": "system", "content": system_text},
+                {"role": "user", "content": "Fill the resume template placeholders."},
+            ]
+        })
+        raw = result["messages"][-1].content
+
+        try:
+            start = raw.find("{")
+            end = raw.rfind("}") + 1
+            if start != -1 and end > start:
+                fill_data = json.loads(raw[start:end])
+            else:
+                return {"error": "Failed to parse agent response."}
+        except json.JSONDecodeError:
+            return {"error": "Failed to parse agent response."}
+
+        fill_template(template_path, fill_data, output_path) 
+        
+        return {
+            "status": "success",
+            "placeholders_filled": list(fill_data.keys()),
+        }
 
 
 rag_service = RAGServise()
