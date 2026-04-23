@@ -124,8 +124,8 @@ class RAGServise:
         placeholders = find_placeholder(template_path)
         if not placeholders:
             return {"error": "No {{PLACEHOLDER}} patterns found in template."}
-        
-        systen_text = template_fill_prompt(
+
+        system_text = template_fill_prompt(
             job_text=job_text, placeholders=placeholders)
 
         result = self.agent.invoke({
@@ -147,7 +147,7 @@ class RAGServise:
             return {"error": "Failed to parse agent response."}
 
         fill_template(template_path, fill_data, output_path) 
-        
+
         return {
             "status": "success",
             "placeholders_filled": list(fill_data.keys()),
