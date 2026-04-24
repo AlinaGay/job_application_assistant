@@ -18,7 +18,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 from rag import rag_service
-from utils import clean_cover_letter, scrape_url
+from utils import clean_cover_letter, find_placeholder, scrape_url
 
 
 app = FastAPI()
@@ -130,3 +130,20 @@ async def download_pdf(cover_letter: str = Form(...)):
     doc.build(story)
     return FileResponse(
         pdf_path, filename="cover_letter.pdf", media_type="application/pdf")
+
+
+@app.post("/upload_template/")
+async def upload_template(file: UploadFile = File(...)):
+    """Upload a DOCX resume template and return its placeholders."""
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    file_path = os.path.join(UPLOAD_DIR, "template.docx")
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    placeholders = find_placeholder(file_path)
+    return {
+        "filename": file.filename,
+        "placeholders": placeholders
+    }
+
+
