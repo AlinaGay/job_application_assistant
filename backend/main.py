@@ -147,3 +147,17 @@ async def upload_template(file: UploadFile = File(...)):
     }
 
 
+@app.post("/fill_template/")
+async def fill_template(job_text: str = Form(...)):
+    """Fill the uploaded DOCX template with AI-generated content."""
+    template_path = os.path.join(UPLOAD_DIR, "template.docx")
+    output_path = os.path.join(UPLOAD_DIR, "filled_resume.docx")
+
+    if not os.path.exists(template_path):
+        return {"error": "Please upload a template first."}
+
+    result = rag_service.fill_resume_template(
+        template_path, job_text, output_path
+    )
+
+    return result
