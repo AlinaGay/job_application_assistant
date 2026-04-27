@@ -161,3 +161,15 @@ async def fill_template(job_text: str = Form(...)):
     )
 
     return result
+
+
+@app.post("/download_filled_resume/")
+async def download_filled_resume():
+    """Download the filled resume DOCX."""
+    docx_path = os.path.join(UPLOAD_DIR, "filled_resume.docx")
+    if not os.path.exists(docx_path):
+        return {"error": "No filled resume found. Generate one first."}
+    return FileResponse(
+        docx_path, filename="resume.docx",
+        media_type="application/vnd.openxmlformats-officedocument"
+                   ".wordprocessingml.document")
