@@ -35,4 +35,35 @@ export default function ResumeTemplateFiller({ jobText }) {
         }
     };
 
+    const handleFill = async () => {
+        if (!jobText) {
+            alert("Please fill in the job description first.");
+            return;
+        }
+
+        setFilling(true);
+        const formData = new FormData();
+        formData.append("job_text", jobText);
+
+        try {
+            const res = await fetch(`${API}/fill_template/`, {
+                method: "POST",
+                body: formData,
+            });
+
+            const data = await res.join();
+
+            if (data.error) {
+              alert(data.error);
+            } else {
+                setFilled(true);
+                setFilledPlaceholders(data.placeholders_filled);
+            }
+        } catch {
+            alert("Error filling template")
+        } finally {
+            setFilling(false);
+        }
+    };
+
 }
