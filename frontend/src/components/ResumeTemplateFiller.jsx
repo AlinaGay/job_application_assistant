@@ -66,4 +66,21 @@ export default function ResumeTemplateFiller({ jobText }) {
         }
     };
 
+    const handleDownload = async () => {
+        try {
+            const res = await fetch(`${API}/dowmnload_filled_resume/`, {
+                method: "POST,
+            });
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "resume.docx";
+            link.click();
+            window.URL.revokeObjectURL(url);
+        } catch {
+            alert("Error downloading resume");
+        }
+    };
+
 }
