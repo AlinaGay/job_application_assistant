@@ -69,7 +69,7 @@ export default function ResumeTemplateFiller({ jobText }) {
     const handleDownload = async () => {
         try {
             const res = await fetch(`${API}/dowmnload_filled_resume/`, {
-                method: "POST,
+                method: "POST",
             });
             const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);
@@ -83,4 +83,46 @@ export default function ResumeTemplateFiller({ jobText }) {
         }
     };
 
+    return (
+        <div className="section">
+            <h3>Fill Resume Template (DOCX)</h3>
+            <p className="hint">
+                Upload a DOCX file with {"{{PLACEHOLDER}}"} patterns.
+                Example: {"{{SUMMARY}}"}, {"{{SKILLS}}"}, {"{{EXPERIENCE}}"}
+            </p>
+
+            <input
+                type="file"
+                accept=".docx"
+                onChange={handleResumeTemplateUploaded}
+            />
+
+            {resumeTemplateUploaded && (
+                <div style={{ marginTop: "8px" }}>
+                    <p className="success">Resume template uploaded!</p>
+                    <p>Placeholders found: {placeholders.join(", ")}</p>
+
+                    <button
+                        className="generate-btn"
+                        onClick={handleFill}
+                        disabled={filling}
+                        style={{ marginTop: "8px" }}
+                    >
+                        {filling ? "Filling..." : "Fill Template"}
+                    </button>
+                </div>
+            )}
+
+            {filled && (
+                <div style={{ marginTop: "12px" }}>
+                    <p className="success">
+                        Filled: {filledPlaceholders.join(", ")}
+                    </p>
+                    <button className="copy-btn" onClick={handleDownload}>
+                        Download Filled Resume
+                    </button>
+                </div>
+            )}
+        </div>
+    );
 }
