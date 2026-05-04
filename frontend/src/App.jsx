@@ -5,6 +5,7 @@ import { useState } from 'react'
 import FileUpload from "./components/FileUpload";
 import DataInput from "./components/DataInput";
 import CoverLetterResult from "./components/CoverLetterResult";
+import ResumeTemplateFiller from './components/ResumeTemplateFiller';
 import "./App.css";
 
 const API = "http://localhost:8000";
@@ -90,6 +91,7 @@ function App() {
         </button>
   
         <CoverLetterResult coverLetter={coverLetter} />
+        <ResumeTemplateFiller jobText={jobText}/>
       </div>
     );
 }
