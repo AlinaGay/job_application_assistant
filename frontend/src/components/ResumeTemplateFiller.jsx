@@ -51,7 +51,7 @@ export default function ResumeTemplateFiller({ jobText }) {
                 body: formData,
             });
 
-            const data = await res.join();
+            const data = await res.json();
 
             if (data.error) {
               alert(data.error);
@@ -68,7 +68,7 @@ export default function ResumeTemplateFiller({ jobText }) {
 
     const handleDownload = async () => {
         try {
-            const res = await fetch(`${API}/dowmnload_filled_resume/`, {
+            const res = await fetch(`${API}/download_filled_resume/`, {
                 method: "POST",
             });
             const blob = await res.blob();
