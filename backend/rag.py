@@ -17,10 +17,10 @@ from langgraph.prebuilt import create_react_agent
 
 from config import EMBEDDING_MODEL, LLM_MODEL, CHUNK_SIZE, CHUNK_OVERLAP
 from prompts import cover_letter_prompt, template_fill_prompt
-from utils import find_placeholder, fill_template
+from utils import find_placeholders, fill_template
 
 
-class RAGServise:
+class RAGServiсe:
     """Manages document indexing and cover letter generation.
 
     Stores resume and about_me documents in separate FAISS vector stores.
@@ -121,7 +121,7 @@ class RAGServise:
         if not self.resume_store:
             return {"error": "Please upload your resume first."}
 
-        placeholders = find_placeholder(template_path)
+        placeholders = find_placeholders(template_path)
         if not placeholders:
             return {"error": "No {{PLACEHOLDER}} patterns found in template."}
 
@@ -154,4 +154,4 @@ class RAGServise:
         }
 
 
-rag_service = RAGServise()
+rag_service = RAGServiсe()

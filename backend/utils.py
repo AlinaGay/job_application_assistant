@@ -50,15 +50,15 @@ def clean_cover_letter(text: str) -> str:
     return text.strip()
 
 
-def find_placeholder(file_path: str) -> list:
+def find_placeholders(file_path: str) -> list:
     """Find all {{PLACEHOLDER}} patterns in a DOCX file."""
     doc = Document(file_path)
-    plaseholders = set()
+    plaсeholders = set()
 
     for paragraph in _iter_all_paragraphs(doc):
-        plaseholders.update(PLACEHOLDER_PATTERN.findall(paragraph.text))
+        plaсeholders.update(PLACEHOLDER_PATTERN.findall(paragraph.text))
 
-    return sorted(plaseholders)
+    return sorted(plaсeholders)
 
 
 def fill_template(file_path: str, data: dict, output_path: str,

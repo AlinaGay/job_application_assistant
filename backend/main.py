@@ -18,7 +18,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 from rag import rag_service
-from utils import clean_cover_letter, find_placeholder, scrape_url
+from utils import clean_cover_letter, find_placeholders, scrape_url
 
 
 app = FastAPI()
@@ -140,7 +140,7 @@ async def upload_template(file: UploadFile = File(...)):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    placeholders = find_placeholder(file_path)
+    placeholders = find_placeholders(file_path)
     return {
         "filename": file.filename,
         "placeholders": placeholders
