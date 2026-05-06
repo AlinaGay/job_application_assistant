@@ -91,7 +91,9 @@ function App() {
         </button>
   
         <CoverLetterResult coverLetter={coverLetter} />
+        
         <ResumeTemplateFiller jobText={jobText}/>
+
       </div>
     );
 }
