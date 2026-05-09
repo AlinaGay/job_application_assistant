@@ -17,6 +17,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
+from config import BASE_DIR, CORS_ORIGINS, UPLOAD_DIR
 from rag import rag_service
 from utils import clean_cover_letter, find_placeholders, scrape_url
 
@@ -24,14 +25,11 @@ from utils import clean_cover_letter, find_placeholders, scrape_url
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=CORS_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["Content-Disposition"],
 )
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 
 
 @app.post("/upload_resume/")
