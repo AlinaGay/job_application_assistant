@@ -6,16 +6,18 @@ for resume and about_me documents, and uses a LangGraph ReAct agent
 to generate personalized cover letters.
 """
 import json
+import os
 
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import ChatOllama
 from langchain_community.vectorstores import FAISS
+from lanchain_mcp_adapters.client import MultiServerMCPClient
 from langchain.tools import tool
 from langgraph.prebuilt import create_react_agent
 
-from config import EMBEDDING_MODEL, LLM_MODEL, CHUNK_SIZE, CHUNK_OVERLAP
+from config import BASE_DIR, EMBEDDING_MODEL, LLM_MODEL, CHUNK_SIZE, CHUNK_OVERLAP
 from prompts import cover_letter_prompt, template_fill_prompt
 from utils import find_placeholders, fill_template
 
@@ -35,8 +37,22 @@ class RAGServiсe:
         )
         self.resume_store = None
         self.about_me_store = None
+        self._extra_tools = []
         self.agent = self._create_agent()
 
+    async def init_mcp_tools(self):
+        """Switch external MCP-servers and recreate the agent."""
+        client = MultiServerMCPClient({
+            "github-projects": {
+                "command": "python",
+                "args": [os.path.join(BASE_DIR, "github_mcp.py")],
+                "transport": "stdio",
+                "env": {"GH_TOKEN": os.environ["GH_TOKEN"]},
+            }
+        })
+        self._extra_tools = await client.get_tools()
+        self.agent = self._create_agent()
+    
     def _load_and_split(self, file_path: str):
         """Load a PDF or TXT file and split into chunks."""
         if file_path.endswith(".pdf"):
@@ -83,7 +99,9 @@ class RAGServiсe:
             return self._retrieve(self.about_me_store, query, "About Me")
 
         return create_react_agent(
-            self.llm, [retrieve_resume, retrieve_about_me])
+            self.llm,
+            [retrieve_resume, retrieve_about_me, *self._extra_tools]
+        )
 
     def generate_cover_letter(self, company_text: str, job_text: str) -> str:
         """Generate a cover letter using the ReAct agent.
