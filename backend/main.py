@@ -8,6 +8,8 @@ cover letter generation via RAG agent, and PDF export.
 import os
 import shutil
 
+from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -22,7 +24,14 @@ from rag import rag_service
 from utils import clean_cover_letter, find_placeholders, scrape_url
 
 
-app = FastAPI()
+load_dotenv()
+
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    await rag_service.init_mcp_tools()
+    yield
+
+app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,

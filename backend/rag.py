@@ -13,7 +13,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import ChatOllama
 from langchain_community.vectorstores import FAISS
-from lanchain_mcp_adapters.client import MultiServerMCPClient
+from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain.tools import tool
 from langgraph.prebuilt import create_react_agent
 
@@ -52,7 +52,7 @@ class RAGServiсe:
         })
         self._extra_tools = await client.get_tools()
         self.agent = self._create_agent()
-    
+
     def _load_and_split(self, file_path: str):
         """Load a PDF or TXT file and split into chunks."""
         if file_path.endswith(".pdf"):
