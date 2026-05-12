@@ -7,6 +7,7 @@ to generate personalized cover letters.
 """
 import json
 import os
+import sys
 
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -22,7 +23,7 @@ from prompts import cover_letter_prompt, template_fill_prompt
 from utils import find_placeholders, fill_template
 
 
-class RAGServiсe:
+class RAGService:
     """Manages document indexing and cover letter generation.
 
     Stores resume and about_me documents in separate FAISS vector stores.
@@ -41,16 +42,18 @@ class RAGServiсe:
         self.agent = self._create_agent()
 
     async def init_mcp_tools(self):
-        """Switch external MCP-servers and recreate the agent."""
+        """Connect external MCP servers and rebuild the agent."""
         client = MultiServerMCPClient({
             "github-projects": {
-                "command": "python",
+                "command": sys.executable,
                 "args": [os.path.join(BASE_DIR, "github_mcp.py")],
                 "transport": "stdio",
-                "env": {"GH_TOKEN": os.environ["GH_TOKEN"]},
+                "env": {**os.environ},
             }
         })
         self._extra_tools = await client.get_tools()
+        print(f"[MCP] Loaded {len(self._extra_tools)} tools: "
+              f"{[t.name for t in self._extra_tools]}")
         self.agent = self._create_agent()
 
     def _load_and_split(self, file_path: str):
@@ -172,4 +175,4 @@ class RAGServiсe:
         }
 
 
-rag_service = RAGServiсe()
+rag_service = RAGService()

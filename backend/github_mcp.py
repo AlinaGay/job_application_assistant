@@ -9,10 +9,21 @@ from fastmcp import FastMCP
 load_dotenv()
 
 mcp = FastMCP("github-projects")
-HEADERS = {
-    "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
-    "Accept": "application/vnd.github+json"
-}
+
+
+def _headers(raw: bool = False) -> dict:
+    accept = "application/vnd.github.raw" if raw else "application/vnd.github+json"
+    return {
+        "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
+        "Accept": accept,
+    }
+
+
+def _username() -> str:
+    """Get authenticated user's login (used by repo-name tools)."""
+    return requests.get(
+        "https://api.github.com/user", headers=_headers(), timeout=10
+    ).json()["login"]
 
 
 @mcp.tool
@@ -20,7 +31,7 @@ def repos_list(limit: int = 20) -> list[dict]:
     """List the user's repositories, sorted by last update."""
     r = requests.get(
         "https://api.github.com/user/repos",
-        headers=HEADERS,
+        headers=_headers(),
         params={"per_page": limit, "sort": "updated"},
         timeout=10
     )
@@ -40,27 +51,23 @@ def repos_list(limit: int = 20) -> list[dict]:
 @mcp.tool
 def get_readme(repo_name: str) -> str:
     """Fetch README content of a given repo by name."""
-    user = requests.get(
-        "https://api.github.com/user", headers=HEADERS, timeout=10
-    ).json()
     r = requests.get(
-        f"https://api.github.com/repos/{user['login']}/{repo_name}/readme",
-        headers={**HEADERS, "Accept": "application/vnd.github.raw"},
+        f"https://api.github.com/repos/{_username()}/{repo_name}/readme",
+        headers=_headers(raw=True),
         timeout=10,
     )
+    if r.status_code == 404:
+        return ""
     r.raise_for_status()
     return r.text[:4000]
 
 
 @mcp.tool
-def get_repo_languages(repo_name: str) -> str:
+def get_repo_languages(repo_name: str) -> dict:
     """Get languages and their byte-count for a given repo."""
-    user = requests.get(
-        "https://api.github.com/user", headers=HEADERS, timeout=10
-    ).json()
     r = requests.get(
-        f"https://api.github.com/repos/{user['login']}/{repo_name}/languages",
-        headers=HEADERS,
+        f"https://api.github.com/repos/{_username()}/{repo_name}/languages",
+        headers=_headers(),
         timeout=10,
     )
     r.raise_for_status()
