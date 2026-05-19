@@ -158,6 +158,9 @@ Frontend runs at http://localhost:5173.
 | POST | `/scrape/` | Extract text from URL |
 | POST | `/generate/` | Generate cover letter |
 | POST | `/download_pdf/` | Download letter as PDF |
+| POST | `/upload_template/` | Upload a DOCX resume template |
+| POST | `/fill_template//` | Fill the uploaded DOCX template |
+| POST | `/download_filled_resume/` | Download the filled resume DOCX |
 
 ## License
 

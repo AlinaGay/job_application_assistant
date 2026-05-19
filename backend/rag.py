@@ -134,6 +134,9 @@ class RAGService:
             ]
         })
 
+        for msg in result["messages"]:
+            print(f"[{msg.type}] {str(msg.content)[:200]}")
+
         return result["messages"][-1].content
 
     def fill_resume_template(self, template_path: str, job_text: str,
