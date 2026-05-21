@@ -5,6 +5,10 @@ import requests
 from dotenv import load_dotenv
 from fastmcp import FastMCP
 
+from config import GITHUB
+
+
+
 
 load_dotenv()
 
@@ -22,7 +26,7 @@ def _headers(raw: bool = False) -> dict:
 def _username() -> str:
     """Get authenticated user's login (used by repo-name tools)."""
     return requests.get(
-        "https://api.github.com/user", headers=_headers(), timeout=10
+        f"{GITHUB}/user", headers=_headers(), timeout=10
     ).json()["login"]
 
 
@@ -30,7 +34,7 @@ def _username() -> str:
 def repos_list(limit: int = 20) -> list[dict]:
     """List the user's repositories, sorted by last update."""
     r = requests.get(
-        "https://api.github.com/user/repos",
+        f"{GITHUB}/user/repos",
         headers=_headers(),
         params={"per_page": limit, "sort": "updated"},
         timeout=10
@@ -52,7 +56,7 @@ def repos_list(limit: int = 20) -> list[dict]:
 def get_readme(repo_name: str) -> str:
     """Fetch README content of a given repo by name."""
     r = requests.get(
-        f"https://api.github.com/repos/{_username()}/{repo_name}/readme",
+        f"{GITHUB}/repos/{_username()}/{repo_name}/readme",
         headers=_headers(raw=True),
         timeout=10,
     )
@@ -66,7 +70,7 @@ def get_readme(repo_name: str) -> str:
 def get_repo_languages(repo_name: str) -> dict:
     """Get languages and their byte-count for a given repo."""
     r = requests.get(
-        f"https://api.github.com/repos/{_username()}/{repo_name}/languages",
+        f"{GITHUB}/repos/{_username()}/{repo_name}/languages",
         headers=_headers(),
         timeout=10,
     )
