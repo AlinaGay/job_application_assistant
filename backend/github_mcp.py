@@ -8,8 +8,6 @@ from fastmcp import FastMCP
 from config import GITHUB
 
 
-
-
 load_dotenv()
 
 mcp = FastMCP("github-projects")

@@ -22,4 +22,4 @@ UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 
 CORS_ORIGINS = ["http://localhost:5173"]
 
-GITHUB = https://api.github.com
+GITHUB = "https://api.github.com"
