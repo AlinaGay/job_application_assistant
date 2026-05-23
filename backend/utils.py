@@ -28,11 +28,7 @@ def scrape_url(url: str):
 
 
 def clean_cover_letter(text: str) -> str:
-    """Remove service text before and after the actual letter.
-
-    Extracts only the content between 'Dear...' and 'Kind regards, Alina',
-    stripping any LLM commentary or metadata.
-    """
+    """Remove service text before and after the actual letter."""
     start_markers = ["Dear"]
     for marker in start_markers:
         idx = text.find(marker)
