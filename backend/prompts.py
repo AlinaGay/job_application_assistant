@@ -78,8 +78,8 @@ def template_fill_prompt(job_text: str, placeholders: list) -> str:
         "a placeholder name and each value is the text to insert.\n\n"
         "Example:\n"
         "{\n"
-        '  "SUMMARY": "Backend Developer with 5 years...",\n'
-        '  "SKILLS": "Python, FastAPI, Docker...",\n'
+        '  "JOB POSITION": [Job Position]",\n'
+        '  "SUMMARY": "[Job Position] with 11+ years in IT. ... Active mentor at Yandex Practicum and AI Mentor at the University of Belgrade. International conference speaker on AI automation.Permanent Resident of Serbia with a valid work permit, based in Novi Sad.",\n'
         '  "EXPERIENCE": "Built production API serving 10K users..."\n'
         "}\n\n"
         "Rules:\n"
