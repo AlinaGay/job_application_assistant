@@ -82,6 +82,7 @@ def template_fill_prompt(job_text: str, placeholders: list) -> str:
         • repos_list(limit)            — list the candidate's GitHub repositories
         • get_readme(repo_name)        — fetch README of a specific repo
         • get_repo_languages(repo_name)— get language breakdown of a repo'''
+
         "Example:\n"
         "{\n"
         '  "JOB POSITION": [Job Position]",\n'
