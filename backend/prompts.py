@@ -89,6 +89,7 @@ def template_fill_prompt(job_text: str, placeholders: list) -> str:
         '  "SUMMARY": "[Job Position] with 11+ years in IT. ... Active mentor at Yandex Practicum and AI Mentor at the University of Belgrade. International conference speaker on AI automation.Permanent Resident of Serbia with a valid work permit, based in Novi Sad.",\n'
         '  "EXPERIENCE": "Built production API serving 10K users..."\n'
         "}\n\n"
+        
         "Rules:\n"
         "- Return ONLY the JSON, no commentary\n"
         "- Keep all facts accurate\n"
