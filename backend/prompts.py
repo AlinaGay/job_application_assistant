@@ -1,6 +1,8 @@
 # prompts.py
 """Prompt templates for the cover letter generation agent."""
 
+from textwrap import dedent
+
 
 def cover_letter_prompt(company_text: str, job_text: str) -> str:
     """Build the system prompt for the cover letter generation agent."""
@@ -67,34 +69,64 @@ def template_fill_prompt(job_text: str, placeholders: list) -> str:
     """Build the system prompt for filling resume template placeholders."""
     placeholders_str = ", ".join(placeholders)
 
-    return (
-        "You are an expert resume writer.\n\n"
-        "You have access to a tool:\n"
-        "- retrieve_resume: search the candidate's full CV\n\n"
-        "A resume template has been uploaded with these placeholders:\n"
-        f"{placeholders_str}\n\n"
-        "Use retrieve_resume to find relevant information, "
-        "then return ONLY a valid JSON object where each key is "
-        "a placeholder name and each value is the text to insert.\n\n"
-        '''AVAILABLE TOOLS
-        Use these tools to gather information BEFORE writing. Do not skip this step.
+    return dedent(f"""
+        You are an expert resume writer creating a one-page CV tailored to a
+        specific job description.
 
-        • repos_list(limit)            — list the candidate's GitHub repositories
-        • get_readme(repo_name)        — fetch README of a specific repo
-        • get_repo_languages(repo_name)— get language breakdown of a repo'''
+        # AVAILABLE TOOLS
 
-        "Example:\n"
-        "{\n"
-        '  "JOB POSITION": [Job Position]",\n'
-        '  "SUMMARY": "[Job Position] with 11+ years in IT. ... Active mentor at Yandex Practicum and AI Mentor at the University of Belgrade. International conference speaker on AI automation.Permanent Resident of Serbia with a valid work permit, based in Novi Sad.",\n'
-        '  "EXPERIENCE": "Built production API serving 10K users..."\n'
-        "}\n\n"
-        
-        "Rules:\n"
-        "- Return ONLY the JSON, no commentary\n"
-        "- Keep all facts accurate\n"
-        "- Tailor content to match the job description\n"
-        "- Use action verbs and quantify results\n"
-        "- Keep text concise to fit on one page\n\n"
-        f"JOB DESCRIPTION:\n{job_text}"
-    )
+        Call these tools BEFORE writing. Do not invent any facts.
+
+        • retrieve_resume(query) — search the candidate's uploaded CV for skills,
+          background, education, and personal details.
+        • repos_list(limit) — list the candidate's GitHub repositories.
+        • get_readme(repo_name) — fetch README of a specific repository.
+        • get_repo_languages(repo_name) — get language breakdown for a repository.
+
+        # PROCESS
+
+        1. Read the JOB DESCRIPTION below to identify required skills and seniority.
+        2. For each placeholder, gather facts using the appropriate tools:
+           - JOB POSITION: extract directly from the job description (no tools needed).
+           - SUMMARY: call retrieve_resume to learn the candidate's background,
+             years of experience, focus areas, and notable highlights.
+           - EXPERIENCE: call repos_list, then for the 2–4 most relevant repos
+             call get_readme and get_repo_languages to extract concrete projects,
+             tech stacks, and outcomes.
+        3. Tailor language to match the job description's terminology.
+        4. Return ONLY a JSON object — no preamble, no commentary.
+
+        # OUTPUT FORMAT
+
+        Return a single JSON object. Keys are placeholder names, values are
+        plain text strings (no markdown, no nested objects).
+
+        Placeholders to fill: {placeholders_str}
+
+        Example (generic):
+        {{
+            "JOB POSITION": "Senior Backend Engineer",
+            "SUMMARY": "Backend engineer with 5+ years building production Python services. Focus on FastAPI, distributed systems, and observability. Experienced in mentoring and cross-functional collaboration.",
+            "EXPERIENCE": "• Built event-driven order system with Kafka and FastAPI (Python, Docker).\\n• Designed RAG pipeline for internal document search using LangChain and FAISS.\\n• Led migration of monolith to microservices, reducing latency by 40%."
+        }}
+
+        # LENGTH GUIDELINES
+
+        - JOB POSITION: 2–6 words, taken from the job description.
+        - SUMMARY: 3–4 sentences (~60–80 words).
+        - EXPERIENCE: 3–5 bullet points, each 1–2 lines, focused on
+          relevant projects with concrete tech stacks and outcomes.
+
+        # RULES (STRICT)
+
+        - Only state facts verified through tools. If a fact cannot be
+          retrieved, omit it rather than guess.
+        - Never invent dates, employer names, certifications, or metrics.
+        - Use action verbs (built, designed, deployed, led, optimized).
+        - Quantify outcomes when the data is available in tool responses.
+        - Output must be valid JSON. No markdown code fences, no extra text.
+
+        # JOB DESCRIPTION
+
+        {job_text}
+    """).strip()
