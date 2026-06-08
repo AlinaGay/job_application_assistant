@@ -65,13 +65,18 @@ End with exactly:
 """
 
 
-def template_fill_prompt(job_text: str, placeholders: list) -> str:
-    """Build the system prompt for filling resume template placeholders."""
+def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
+    """Build the system prompt for filling resume template placeholders.
+
+    The prompt enforces strict structural rules so the output can be
+    deterministically rendered into a DOCX template with proper formatting.
+    """
     placeholders_str = ", ".join(placeholders)
 
     return dedent(f"""
         You are an expert resume writer creating a one-page CV tailored to a
-        specific job description.
+        specific job description. Your output will be inserted into a DOCX
+        template, so structural rules are strict.
 
         # AVAILABLE TOOLS
 
@@ -85,45 +90,81 @@ def template_fill_prompt(job_text: str, placeholders: list) -> str:
 
         # PROCESS
 
-        1. Read the JOB DESCRIPTION below to identify required skills and seniority.
-        2. For each placeholder, gather facts using the appropriate tools:
-           - JOB POSITION: extract directly from the job description (no tools needed).
-           - SUMMARY: call retrieve_resume to learn the candidate's background,
-             years of experience, focus areas, and notable highlights.
-           - EXPERIENCE: call repos_list, then for the 2–4 most relevant repos
-             call get_readme and get_repo_languages to extract concrete projects,
-             tech stacks, and outcomes.
-        3. Tailor language to match the job description's terminology.
-        4. Return ONLY a JSON object — no preamble, no commentary.
+        1. Read the JOB DESCRIPTION below and extract:
+           - The exact role title.
+           - The top 5–8 required skills, technologies, and seniority signals.
+           Keep this analysis internal; do not return it.
+
+        2. Fill JOB POSITION:
+           - Take it verbatim from the job description (2–6 words).
+           - Examples: "Senior AI Engineer", "Backend Developer", "ML Engineer".
+
+        3. Fill SUMMARY:
+           - Call retrieve_resume to learn the candidate's years of experience,
+             focus areas, and notable highlights.
+           - The SUMMARY field is appended directly after JOB POSITION in the
+             rendered resume. Therefore it MUST start with the exact phrase
+             "with experience in " (lowercase 'w', single space, no comma).
+           - DO NOT repeat or paraphrase the job title in SUMMARY.
+           - DO NOT start with "as a", "I am", or any other prefix.
+           - 2–3 sentences total, ~50–70 words.
+
+        4. Fill EXPERIENCE:
+           - Call repos_list to list all repositories.
+           - Score each repo against the extracted skills from step 1.
+             Higher score = more matching technologies and a similar domain.
+           - Select EXACTLY 3 repositories with the highest scores.
+           - For each selected repo, call get_readme and get_repo_languages
+             to gather facts.
+           - For each project, produce an object with:
+             - "name": the repository name (will be rendered in bold).
+             - "description": ONE sentence (15–25 words) that includes
+               (a) what the program does (the purpose, not the implementation),
+               and (b) the key technologies used. Use action verbs.
+
+        5. Return ONLY a JSON object — no preamble, no markdown fences,
+           no commentary.
 
         # OUTPUT FORMAT
 
-        Return a single JSON object. Keys are placeholder names, values are
-        plain text strings (no markdown, no nested objects).
-
         Placeholders to fill: {placeholders_str}
 
-        Example (generic):
+        The output schema is fixed:
+
         {{
-            "JOB POSITION": "Senior Backend Engineer",
-            "SUMMARY": "Backend engineer with 5+ years building production Python services. Focus on FastAPI, distributed systems, and observability. Experienced in mentoring and cross-functional collaboration.",
-            "EXPERIENCE": "• Built event-driven order system with Kafka and FastAPI (Python, Docker).\\n• Designed RAG pipeline for internal document search using LangChain and FAISS.\\n• Led migration of monolith to microservices, reducing latency by 40%."
+            "JOB POSITION": "<string, 2-6 words>",
+            "SUMMARY": "<string starting with 'with experience in '>",
+            "EXPERIENCE": [
+                {{"name": "<repo name>", "description": "<one sentence>"}},
+                {{"name": "<repo name>", "description": "<one sentence>"}},
+                {{"name": "<repo name>", "description": "<one sentence>"}}
+            ]
         }}
 
-        # LENGTH GUIDELINES
+        Example (illustrative — do not copy facts):
 
-        - JOB POSITION: 2–6 words, taken from the job description.
-        - SUMMARY: 3–4 sentences (~60–80 words).
-        - EXPERIENCE: 3–5 bullet points, each 1–2 lines, focused on
-          relevant projects with concrete tech stacks and outcomes.
+        {{
+            "JOB POSITION": "Senior Backend Engineer",
+            "SUMMARY": "with experience in building production Python services and event-driven systems. Skilled in FastAPI, Kafka, and Docker. Focused on reliability, observability, and clean integration between services.",
+            "EXPERIENCE": [
+                {{"name": "OrderFlow", "description": "Event-driven order processing system built with FastAPI, Kafka, and Docker Compose."}},
+                {{"name": "DocSearch", "description": "Internal document Q&A platform using RAG with LangChain, FAISS, and HuggingFace embeddings."}},
+                {{"name": "ApiGateway", "description": "REST gateway with rate limiting, JWT auth, and Postgres written in Python and FastAPI."}}
+            ]
+        }}
 
         # RULES (STRICT)
 
-        - Only state facts verified through tools. If a fact cannot be
-          retrieved, omit it rather than guess.
+        - JOB POSITION must come from the job description, not invented.
+        - SUMMARY must start exactly with "with experience in " — no other prefix.
+        - SUMMARY must NOT mention or paraphrase the job title.
+        - EXPERIENCE must contain EXACTLY 3 items — never 2, never 4.
+        - Each EXPERIENCE description must include at least 2 concrete
+          technologies (languages, frameworks, or services).
+        - Each EXPERIENCE description must convey what the program does
+          (its purpose), not just the tech stack.
+        - Only state facts verified through tools. Omit anything you cannot verify.
         - Never invent dates, employer names, certifications, or metrics.
-        - Use action verbs (built, designed, deployed, led, optimized).
-        - Quantify outcomes when the data is available in tool responses.
         - Output must be valid JSON. No markdown code fences, no extra text.
 
         # JOB DESCRIPTION
