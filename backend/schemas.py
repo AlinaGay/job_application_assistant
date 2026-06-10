@@ -8,11 +8,13 @@ from typing import Annotated
 
 
 class ExperinceItem(BaseModel):
+    """A single project entry shown in the EXPERIENCE section of the CV."""
     name: str = Field(..., min_length=1, max_length=80)
     description: str = Field(..., min_length=20, max_length=300)
 
 
 class FilledResume(BaseModel):
+    """Validated LLM output used to placeholders in the resume template."""
     job_position: Annotated[
         str, Field(alias="JOB_POSITION", min_length=1, max_length=80)]
     summary: Annotated[
