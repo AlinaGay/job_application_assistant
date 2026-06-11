@@ -30,25 +30,27 @@ def _username() -> str:
 
 
 @mcp.tool
-def repos_list(limit: int = 20) -> list[dict]:
-    """List the user's repositories, sorted by last update."""
-    r = requests.get(
-        f"{GITHUB}/user/repos",
+def repos_list(limit: int = 30) -> list[dict]:
+    """List candidate's original (non-fork) repositories with READMEs."""
+    response = requests.get(
+        f"{GITHUB}/users/{_username()}/repos",
         headers=_headers(),
-        params={"per_page": limit, "sort": "updated"},
+        params={"per_page": 100, "sort": "updated"},
         timeout=10
     )
-    r.raise_for_status()
-    return [
+    response.raise_for_status()
+    repos = [
         {
             "name": repo["name"],
             "description": repo["description"],
             "language": repo["language"],
-            "url": repo["html_url"],
+            "updated_at": repo["updated_at"],
+            "stargazers_count": repo["stargazers_count"],
         }
-        for repo in r.json()
-        if not repo["fork"]
+        for repo in response.json()
+        if not repo["fork"] and not repo["archived"]
     ]
+    return repos[:limit]
 
 
 @mcp.tool
