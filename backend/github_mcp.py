@@ -54,6 +54,14 @@ def repos_list(limit: int = 30) -> list[dict]:
 
 
 @mcp.tool
+def get_repo_tech_stack(repo_name: str) -> dict:
+    """Extract probable tech stack from README and language stats."""
+    readme = get_readme(repo_name)
+    languages = get_repo_languages(repo_name)
+    return {"languages": languages, "readme_excerpt": readme[:2000]}
+
+
+@mcp.tool
 def get_readme(repo_name: str) -> str:
     """Fetch README content of a given repo by name."""
     r = requests.get(
