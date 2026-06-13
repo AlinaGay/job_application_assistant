@@ -17,9 +17,11 @@ from langchain_community.vectorstores import FAISS
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain.tools import tool
 from langgraph.prebuilt import create_react_agent
+from pydantic import ValidationError
 
 from config import BASE_DIR, EMBEDDING_MODEL, LLM_MODEL, CHUNK_SIZE, CHUNK_OVERLAP
 from prompts import cover_letter_prompt, template_fill_prompt
+from schemas import FilledResume
 from utils import find_placeholders, fill_template
 
 
