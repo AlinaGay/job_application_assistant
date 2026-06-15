@@ -162,15 +162,22 @@ class RAGService:
         })
         raw = result["messages"][-1].content
 
+        start = raw.find("{")
+        end = raw.rfind("}") + 1
+        if start != -1 and end <= start:
+            return {"error": "No JSON object found in agent response."}
+
         try:
-            start = raw.find("{")
-            end = raw.rfind("}") + 1
-            if start != -1 and end > start:
-                fill_data = json.loads(raw[start:end])
-            else:
-                return {"error": "Failed to parse agent response."}
-        except json.JSONDecodeError:
-            return {"error": "Failed to parse agent response."}
+            validated: FilledResume = FilledResume.model_validate_json(
+                raw[start:end])
+            fill_data = json.loads(raw[start:end])
+        except ValidationError as error:
+            return {
+                "error": "LLM output failed schema validation",
+                "details": error.errors(),
+            }
+
+        fill_data = validated.model_dump(by_alias=True)
 
         fill_template(template_path, fill_data, output_path) 
 
