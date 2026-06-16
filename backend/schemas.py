@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, field_validator
 from typing import Annotated
 
 
-class ExperinceItem(BaseModel):
+class ExperienceItem(BaseModel):
     """A single project entry shown in the EXPERIENCE section of the CV."""
     name: str = Field(..., min_length=1, max_length=80)
     description: str = Field(..., min_length=20, max_length=300)
@@ -18,7 +18,7 @@ class ExperinceItem(BaseModel):
 class FilledResume(BaseModel):
     """Validated LLM output used to placeholders in the resume template."""
     job_position: Annotated[
-        str, Field(alias="JOB_POSITION", min_length=1, max_length=80)]
+        str, Field(alias="JOB POSITION", min_length=1, max_length=80)]
     summary: Annotated[
         str, Field(alias="SUMMARY", min_length=30, max_length=500)]
     experience: Annotated[
