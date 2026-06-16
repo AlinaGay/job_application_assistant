@@ -1,4 +1,5 @@
 # prompts.py
+
 """Prompt templates for the cover letter generation agent."""
 
 from textwrap import dedent

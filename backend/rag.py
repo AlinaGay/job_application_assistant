@@ -1,4 +1,5 @@
 # rag.py
+
 """RAG service for document indexing and cover letter generation.
 
 Provides a RAGService class that manages FAISS vector stores

@@ -1,4 +1,5 @@
 # config.py
+
 """Configuration constants for the RAG pipeline.
 
 Centralizes model names and chunking parameters

@@ -1,4 +1,5 @@
 # main.py
+
 """FastAPI backend for the Job Application Assistant.
 
 Provides endpoints for resume and about_me upload, web scraping,

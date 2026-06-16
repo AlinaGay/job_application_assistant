@@ -1,3 +1,5 @@
+# schemas.py
+
 """Pydantic schemas for structured LLM outputs.
 These schemas validate the JSON returned by the LLM and serve as a
 single source of truth for the resume template contract.
