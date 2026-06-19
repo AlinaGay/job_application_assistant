@@ -15,7 +15,8 @@ mcp = FastMCP("github-projects")
 
 def _headers(raw: bool = False) -> dict:
     """Build authenticated headers for GitHub REST API requests."""
-    accept = "application/vnd.github.raw" if raw else "application/vnd.github+json"
+    accept = (
+        "application/vnd.github.raw" if raw else "application/vnd.github+json")
     return {
         "Authorization": f"Bearer {os.environ['GH_TOKEN']}",
         "Accept": accept,
