@@ -22,7 +22,7 @@ class FilledResume(BaseModel):
     summary: Annotated[
         str, Field(alias="SUMMARY", min_length=30, max_length=500)]
     experience: Annotated[
-        list[ExperinceItem],
+        list[ExperienceItem],
         Field(alias="EXPERIENCE", min_length=3, max_length=3)]
 
     @field_validator("summary")
