@@ -107,3 +107,10 @@ def _clear_paragraph(paragraph: Paragraph) -> None:
     """Remove all existing runs from a paragraph (keeps its style)."""
     for run in list(paragraph.runs):
         run._r.getparent().remove(run.r)
+
+
+def _write_project_into_paragraph(paragraph: Paragraph, project: dict) -> None:
+    """Write a project entry into a (cleared) paragraph: name — description."""
+    name_run = paragraph.add_run(project["name"])
+    name_run.bold = True
+    paragraph.add_run(f" - {project['description']}")
