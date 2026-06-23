@@ -101,3 +101,9 @@ def _replace_with_text(
             placeholder, replacement)
         for run in paragraph.runs[1:]:
             run.text = ""
+
+
+def _clear_paragraph(paragraph: Paragraph) -> None:
+    """Remove all existing runs from a paragraph (keeps its style)."""
+    for run in list(paragraph.runs):
+        run._r.getparent().remove(run.r)
