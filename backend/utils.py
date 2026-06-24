@@ -73,7 +73,6 @@ def fill_template(file_path: str, data: dict, output_path: str,
             if placeholder not in paragraph.text:
                 continue
 
-
     doc.save(output_path)
 
 
