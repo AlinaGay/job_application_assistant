@@ -102,6 +102,27 @@ def _replace_with_text(
             run.text = ""
 
 
+def _replace_with_project_list(
+    paragraph: Paragraph, placeholder: str, projects: list[dict]
+) -> None:
+    """Replace a placeholder with a bulleted list of projects."""
+    if not projects:
+        _replace_with_text(paragraph, placeholder, "")
+        return
+
+    _clear_paragraph(paragraph)
+    _write_project_into_paragraph(paragraph, projects[0])
+
+    current = paragraph
+    for project in projects[1:]:
+        new_para_xml = copy.deepcopy(paragraph._p)
+        current._p.addnext(new_para_xml)
+        new_para = Paragraph(new_para_xml, paragraph._parent)
+        _clear_paragraph(new_para)
+        _write_project_into_paragraph(new_para, project)
+        current = new_para
+
+
 def _clear_paragraph(paragraph: Paragraph) -> None:
     """Remove all existing runs from a paragraph (keeps its style)."""
     for run in list(paragraph.runs):
