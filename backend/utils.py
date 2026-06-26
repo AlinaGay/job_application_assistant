@@ -73,6 +73,11 @@ def fill_template(file_path: str, data: dict, output_path: str,
             if placeholder not in paragraph.text:
                 continue
 
+            if isinstance(value, list):
+                _replace_with_project_list(paragraph, placeholder, value)
+            else:
+                _replace_with_text(paragraph, placeholder, str(value))
+
     doc.save(output_path)
 
 
