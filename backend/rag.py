@@ -186,7 +186,7 @@ class RAGService:
 
         fill_data = validated.model_dump(by_alias=True)
 
-        fill_template(template_path, fill_data, output_path) 
+        fill_template(template_path, fill_data, output_path)
 
         return {
             "status": "success",
