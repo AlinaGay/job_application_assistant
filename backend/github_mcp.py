@@ -1,6 +1,7 @@
 # github_mcp.py
 
 import os
+from urllib import request
 import requests
 from dotenv import load_dotenv
 from fastmcp import FastMCP
@@ -24,10 +25,10 @@ def _headers(raw: bool = False) -> dict:
 
 
 def _username() -> str:
-    """Get authenticated user's login (used by repo-name tools)."""
-    return requests.get(
-        f"{GITHUB}/user", headers=_headers(), timeout=10
-    ).json()["login"]
+    """Get authenticated user's login."""
+    response = requests.get(f"{GITHUB}/user", headers=_headers(), timeout=10)
+    response.raise_for_status()
+    return response.json()["login"]
 
 
 @mcp.tool
