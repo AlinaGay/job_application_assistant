@@ -31,6 +31,19 @@ def _username() -> str:
     return response.json()["login"]
 
 
+def _fetch_readme(repo_name: str) -> str:
+    """Fetch raw README content; returns '' on 404."""
+    r = requests.get(
+        f"{GITHUB}/repos/{_username()}/{repo_name}/readme",
+        headers=_headers(raw=True),
+        timeout=10,
+    )
+    if r.status_code == 404:
+        return ""
+    r.raise_for_status()
+    return r.text[:4000]
+
+
 @mcp.tool
 def repos_list(limit: int = 30) -> list[dict]:
     """List candidate's original (non-fork) repositories with READMEs."""
