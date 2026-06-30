@@ -44,6 +44,17 @@ def _fetch_readme(repo_name: str) -> str:
     return r.text[:4000]
 
 
+def _fetch_languages(repo_name: str) -> dict:
+    """Fetch language byte counts for a repo."""
+    r = requests.get(
+        f"{GITHUB}/repos/{_username()}/{repo_name}/languages",
+        headers=_headers(),
+        timeout=10,
+    )
+    r.raise_for_status()
+    return r.json()
+
+
 @mcp.tool
 def repos_list(limit: int = 30) -> list[dict]:
     """List candidate's original (non-fork) repositories with READMEs."""
