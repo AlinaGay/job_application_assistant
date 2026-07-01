@@ -80,6 +80,12 @@ def repos_list(limit: int = 30) -> list[dict]:
 
 
 @mcp.tool
+def get_readme(repo_name: str) -> str:
+    """Fetch README content of a given repo by name."""
+    return _fetch_readme(repo_name)
+
+
+@mcp.tool
 def get_repo_tech_stack(repo_name: str) -> dict:
     """Extract probable tech stack from README and language stats."""
     readme = get_readme(repo_name)
@@ -87,18 +93,7 @@ def get_repo_tech_stack(repo_name: str) -> dict:
     return {"languages": languages, "readme_excerpt": readme[:2000]}
 
 
-@mcp.tool
-def get_readme(repo_name: str) -> str:
-    """Fetch README content of a given repo by name."""
-    r = requests.get(
-        f"{GITHUB}/repos/{_username()}/{repo_name}/readme",
-        headers=_headers(raw=True),
-        timeout=10,
-    )
-    if r.status_code == 404:
-        return ""
-    r.raise_for_status()
-    return r.text[:4000]
+
 
 
 @mcp.tool
