@@ -86,26 +86,17 @@ def get_readme(repo_name: str) -> str:
 
 
 @mcp.tool
+def get_repo_languages(repo_name: str) -> dict:
+    """Get languages and their byte-count for a given repo."""
+    return _fetch_languages(repo_name)
+
+
+@mcp.tool
 def get_repo_tech_stack(repo_name: str) -> dict:
     """Extract probable tech stack from README and language stats."""
     readme = get_readme(repo_name)
     languages = get_repo_languages(repo_name)
     return {"languages": languages, "readme_excerpt": readme[:2000]}
-
-
-
-
-
-@mcp.tool
-def get_repo_languages(repo_name: str) -> dict:
-    """Get languages and their byte-count for a given repo."""
-    r = requests.get(
-        f"{GITHUB}/repos/{_username()}/{repo_name}/languages",
-        headers=_headers(),
-        timeout=10,
-    )
-    r.raise_for_status()
-    return r.json()
 
 
 if __name__ == "__main__":
