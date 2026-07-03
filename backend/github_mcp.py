@@ -94,9 +94,10 @@ def get_repo_languages(repo_name: str) -> dict:
 @mcp.tool
 def get_repo_tech_stack(repo_name: str) -> dict:
     """Extract probable tech stack from README and language stats."""
-    readme = get_readme(repo_name)
-    languages = get_repo_languages(repo_name)
-    return {"languages": languages, "readme_excerpt": readme[:2000]}
+    return {
+        "languages": _fetch_languages(repo_name),
+        "readme_excerpt": _fetch_readme(repo_name)[:2000]
+    }
 
 
 if __name__ == "__main__":
