@@ -1,7 +1,6 @@
 # github_mcp.py
 
 import os
-from urllib import request
 import requests
 from dotenv import load_dotenv
 from fastmcp import FastMCP
