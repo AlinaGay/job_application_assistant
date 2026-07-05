@@ -149,7 +149,7 @@ class RAGService:
         return result["messages"][-1].content
 
     def fill_resume_template(self, template_path: str, job_text: str,
-                             output_path: str) -> dict:
+                             output_path: str, max_tries: int = 1) -> dict:
         """Fill a DOCX resume template with AI-generated content."""
         if not self.resume_store:
             return {"error": "Please upload your resume first."}
