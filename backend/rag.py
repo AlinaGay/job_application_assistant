@@ -149,7 +149,7 @@ class RAGService:
         return result["messages"][-1].content
 
     def fill_resume_template(self, template_path: str, job_text: str,
-                             output_path: str, max_tries: int = 1) -> dict:
+                             output_path: str, max_retries: int = 1) -> dict:
         """Fill a DOCX resume template with AI-generated content."""
         if not self.resume_store:
             return {"error": "Please upload your resume first."}
@@ -160,37 +160,48 @@ class RAGService:
 
         system_text = template_fill_prompt(
             job_text=job_text, placeholders=placeholders)
+        feedback = ""
 
-        result = self.agent.invoke({
-            "messages": [
-                {"role": "system", "content": system_text},
-                {"role": "user", "content": "Fill the resume template placeholders."},
-            ]
-        })
-        raw = result["messages"][-1].content
+        for attempt in range(max_retries + 1):
+            prompt = system_text + (
+                f"\n\n# PREVIOUS ATTEMPT FAILED\nReason: {feedback}\nFix this issue."
+                if feedback
+                else ""
+            )
 
-        start = raw.find("{")
-        end = raw.rfind("}") + 1
-        if start != -1 and end <= start:
-            return {"error": "No JSON object found in agent response."}
+            result = self.agent.invoke({
+                "messages": [
+                    {"role": "system", "content": prompt},
+                    {"role": "user",
+                     "content": "Fill the resume template placeholders."},
+                ]
+            })
+            raw = result["messages"][-1].content
 
-        try:
-            validated: FilledResume = FilledResume.model_validate_json(
-                raw[start:end])
-            fill_data = json.loads(raw[start:end])
-        except ValidationError as error:
+            start = raw.find("{")
+            end = raw.rfind("}") + 1
+            if start != -1 and end <= start:
+                feedback = "No JSON object found in agent response."
+                continue
+
+            try:
+                validated: FilledResume.model_validate_json(
+                    raw[start:end])
+            except ValidationError as error:
+                feedback = f"Validation failed: {error.errors()}"
+                continue
+
+            fill_data = validated.model_dump(by_alias=True)
+            fill_template(template_path, fill_data, output_path)
+
             return {
-                "error": "LLM output failed schema validation",
-                "details": error.errors(),
+                "status": "success",
+                "placeholders_filled": list(fill_data.keys()),
             }
 
-        fill_data = validated.model_dump(by_alias=True)
-
-        fill_template(template_path, fill_data, output_path)
-
         return {
-            "status": "success",
-            "placeholders_filled": list(fill_data.keys()),
+            "error": "Failed validation after etries",
+            "last_feedback": feedback
         }
 
 
