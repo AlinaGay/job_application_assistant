@@ -185,7 +185,7 @@ class RAGService:
                 continue
 
             try:
-                validated: FilledResume.model_validate_json(
+                validated = FilledResume.model_validate_json(
                     raw[start:end])
             except ValidationError as error:
                 feedback = f"Validation failed: {error.errors()}"

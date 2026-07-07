@@ -131,7 +131,7 @@ def _replace_with_project_list(
 def _clear_paragraph(paragraph: Paragraph) -> None:
     """Remove all existing runs from a paragraph (keeps its style)."""
     for run in list(paragraph.runs):
-        run._r.getparent().remove(run.r)
+        run._r.getparent().remove(run._r)
 
 
 def _write_project_into_paragraph(paragraph: Paragraph, project: dict) -> None:
