@@ -85,7 +85,7 @@ async def generate(
     Requires resume and about_me to be uploaded first.
     The agent retrieves relevant context from both vector stores.
     """
-    letter = rag_service.generate_cover_letter(company_text, job_text)
+    letter = await rag_service.generate_cover_letter(company_text, job_text)
     return {"cover_letter": letter}
 
 
@@ -164,7 +164,7 @@ async def fill_template(job_text: str = Form(...)):
     if not os.path.exists(template_path):
         return {"error": "Please upload a template first."}
 
-    result = rag_service.fill_resume_template(
+    result = await rag_service.fill_resume_template(
         template_path, job_text, output_path
     )
 
