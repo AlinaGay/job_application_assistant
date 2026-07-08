@@ -130,7 +130,7 @@ class RAGService:
         system_text = cover_letter_prompt(
             company_text=company_text, job_text=job_text)
 
-        result = self.agent.invoke({
+        result = self.agent.ainvoke({
             "messages": [
                 {
                     "role": "system",
@@ -169,7 +169,7 @@ class RAGService:
                 else ""
             )
 
-            result = self.agent.invoke({
+            result = self.agent.ainvoke({
                 "messages": [
                     {"role": "system", "content": prompt},
                     {"role": "user",
