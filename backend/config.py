@@ -11,7 +11,7 @@ import os
 
 
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-LLM_MODEL = "llama3.1:8b"
+LLM_MODEL = "qwen2.5:7b"
 CHUNK_SIZE = 1000
 CHUNK_OVERLAP = 200
 
