@@ -115,7 +115,7 @@ class RAGService:
             [retrieve_resume, retrieve_about_me, *self._extra_tools]
         )
 
-    def generate_cover_letter(self, company_text: str, job_text: str) -> str:
+    async def generate_cover_letter(self, company_text: str, job_text: str) -> str:
         """Generate a cover letter using the ReAct agent.
 
         The agent autonomously retrieves relevant data from resume
@@ -130,7 +130,7 @@ class RAGService:
         system_text = cover_letter_prompt(
             company_text=company_text, job_text=job_text)
 
-        result = self.agent.ainvoke({
+        result = await self.agent.ainvoke({
             "messages": [
                 {
                     "role": "system",
@@ -148,7 +148,7 @@ class RAGService:
 
         return result["messages"][-1].content
 
-    def fill_resume_template(self, template_path: str, job_text: str,
+    async def fill_resume_template(self, template_path: str, job_text: str,
                              output_path: str, max_retries: int = 1) -> dict:
         """Fill a DOCX resume template with AI-generated content."""
         if not self.resume_store:
@@ -169,7 +169,7 @@ class RAGService:
                 else ""
             )
 
-            result = self.agent.ainvoke({
+            result = await self.agent.ainvoke({
                 "messages": [
                     {"role": "system", "content": prompt},
                     {"role": "user",
