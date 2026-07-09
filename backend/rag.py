@@ -39,6 +39,7 @@ class RAGService:
     Uses a ReAct agent with tools to retrieve relevant context
     and generate cover letters.
     """
+
     def __init__(self):
         self.embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
         self.llm = ChatOllama(model=LLM_MODEL)
@@ -115,7 +116,8 @@ class RAGService:
             [retrieve_resume, retrieve_about_me, *self._extra_tools]
         )
 
-    async def generate_cover_letter(self, company_text: str, job_text: str) -> str:
+    async def generate_cover_letter(
+            self, company_text: str, job_text: str) -> str:
         """Generate a cover letter using the ReAct agent.
 
         The agent autonomously retrieves relevant data from resume
@@ -148,8 +150,11 @@ class RAGService:
 
         return result["messages"][-1].content
 
-    async def fill_resume_template(self, template_path: str, job_text: str,
-                             output_path: str, max_retries: int = 1) -> dict:
+    async def fill_resume_template(self,
+                                   template_path: str,
+                                   job_text: str,
+                                   output_path: str,
+                                   max_retries: int = 1) -> dict:
         """Fill a DOCX resume template with AI-generated content."""
         if not self.resume_store:
             return {"error": "Please upload your resume first."}
