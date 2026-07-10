@@ -1,6 +1,7 @@
 # schemas.py
 
 """Pydantic schemas for structured LLM outputs.
+
 These schemas validate the JSON returned by the LLM and serve as a
 single source of truth for the resume template contract.
 """
@@ -11,12 +12,14 @@ from typing import Annotated
 
 class ExperienceItem(BaseModel):
     """A single project entry shown in the EXPERIENCE section of the CV."""
+
     name: str = Field(..., min_length=1, max_length=80)
     description: str = Field(..., min_length=20, max_length=300)
 
 
 class FilledResume(BaseModel):
     """Validated LLM output used to placeholders in the resume template."""
+
     job_position: Annotated[
         str, Field(alias="JOB POSITION", min_length=1, max_length=80)]
     summary: Annotated[
