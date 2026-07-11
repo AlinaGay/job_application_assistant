@@ -31,6 +31,7 @@ class FilledResume(BaseModel):
     @field_validator("summary")
     @classmethod
     def must_start_with_phrase(cls, text: str) -> str:
+        """Enforce the required opening phrase of the SUMMARY field."""
         if not text.startswith("with experience in "):
             raise ValueError("SUMMARY must start with 'with experience in '")
         return text
