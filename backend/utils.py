@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from docx import Document
 from docx.text.paragraph import Paragraph
 
-from config import NAMESPACE, PLACEHOLDER_PATTERN
+from config import PLACEHOLDER_PATTERN
 
 
 def scrape_url(url: str):
