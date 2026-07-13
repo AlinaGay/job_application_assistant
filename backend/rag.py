@@ -6,7 +6,7 @@ Provides a RAGService class that manages FAISS vector stores
 for resume and about_me documents, and uses a LangGraph ReAct agent
 to generate personalized cover letters.
 """
-import json
+
 import os
 import sys
 
