@@ -41,6 +41,7 @@ class RAGService:
     """
 
     def __init__(self):
+        """Initialize embeddings, LLM, text splitter, stores, and an agent."""
         self.embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
         self.llm = ChatOllama(model=LLM_MODEL)
         self.splitter = RecursiveCharacterTextSplitter(
