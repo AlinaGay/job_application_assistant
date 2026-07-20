@@ -170,7 +170,8 @@ class RAGService:
 
         for attempt in range(max_retries + 1):
             prompt = system_text + (
-                f"\n\n# PREVIOUS ATTEMPT FAILED\nReason: {feedback}\nFix this issue."
+                f"\n\n# PREVIOUS ATTEMPT FAILED\nReason: {feedback} "
+                "\nFix this issue."
                 if feedback
                 else ""
             )
