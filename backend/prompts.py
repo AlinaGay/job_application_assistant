@@ -14,7 +14,7 @@ cultural alignment with the company.
 
 GUIDING PRINCIPLE
 This is not a CV summary. It's the story of why the candidate belongs at \
-THIS specific company. Every sentence must answer: "Why here? Why this mission?"
+THIS specific company.Every sentence must answer: "Why here? Why this mission?"
 
 AVAILABLE TOOLS
 Use these tools to gather information BEFORE writing. Do not skip this step.
