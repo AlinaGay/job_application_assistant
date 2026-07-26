@@ -31,8 +31,9 @@ REQUIRED WORKFLOW
 3. Call repos_list to see what the candidate has built.
 4. Pick 1-2 repos whose name/description/language best match the job. \
 For those, call get_readme to learn what was actually built and why.
-5. Write the letter. Reference at most ONE concrete project as proof of motivation, \
-not as a CV bullet. The project should illustrate alignment with the company, not list features.
+5. Write the letter. Reference at most ONE concrete project as proof
+of motivation, \not as a CV bullet. The project should illustrate
+alignment with the company, not list features.
 
 PRE-FLIGHT MOTIVATION CHECK
 Pick the strongest available tier:
