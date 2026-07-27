@@ -19,8 +19,10 @@ THIS specific company.Every sentence must answer: "Why here? Why this mission?"
 AVAILABLE TOOLS
 Use these tools to gather information BEFORE writing. Do not skip this step.
 
-  • retrieve_resume(query)       — search the candidate's CV for skills and experience
-  • retrieve_about_me(query)     — search the candidate's personal motivations, stories and values
+  • retrieve_resume(query)       — search the candidate's CV for skills and
+  experience
+  • retrieve_about_me(query)     — search the candidate's personal motivations,
+  stories and values
   • repos_list(limit)            — list the candidate's GitHub repositories
   • get_readme(repo_name)        — fetch README of a specific repo
   • get_repo_languages(repo_name)— get language breakdown of a repo
