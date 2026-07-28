@@ -90,7 +90,8 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
           skills, background, education, and personal details.
         • repos_list(limit) — list the candidate's GitHub repositories.
         • get_readme(repo_name) — fetch README of a specific repository.
-        • get_repo_languages(repo_name) — get language breakdown for a repository.
+        • get_repo_languages(repo_name) — get language breakdown
+          for a repository.
 
         # PROCESS
 
