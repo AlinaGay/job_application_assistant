@@ -102,7 +102,8 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
 
         2. Fill JOB POSITION:
            - Take it verbatim from the job description (2–6 words).
-           - Examples: "Senior AI Engineer", "Backend Developer", "ML Engineer".
+           - Examples: "Senior AI Engineer", "Backend Developer",
+             "ML Engineer".
 
         3. Fill SUMMARY:
            - Call retrieve_resume to learn the candidate's years of experience,
