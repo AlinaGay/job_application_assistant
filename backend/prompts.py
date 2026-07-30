@@ -151,7 +151,10 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
 
         {{
             "JOB POSITION": "Senior Backend Engineer",
-            "SUMMARY": "with experience in building production Python services and event-driven systems. Skilled in FastAPI, Kafka, and Docker. Focused on reliability, observability, and clean integration between services.",
+            "SUMMARY": "with experience in building production Python services
+            and event-driven systems. Skilled in FastAPI, Kafka, and Docker.
+            Focused on reliability, observability, and clean integration
+            between services.",
             "EXPERIENCE": [
                 {{"name": "OrderFlow", "description": "Event-driven order processing system built with FastAPI, Kafka, and Docker Compose."}},
                 {{"name": "DocSearch", "description": "Internal document Q&A platform using RAG with LangChain, FAISS, and HuggingFace embeddings."}},
