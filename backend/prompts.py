@@ -159,7 +159,9 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
                 {{"name": "OrderFlow", "description":
                 "Event-driven order processing system built with FastAPI,
                 Kafka, and Docker Compose."}},
-                {{"name": "DocSearch", "description": "Internal document Q&A platform using RAG with LangChain, FAISS, and HuggingFace embeddings."}},
+                {{"name": "DocSearch", "description": "Internal document Q&A
+                platform using RAG with LangChain, FAISS,
+                and HuggingFace embeddings."}},
                 {{"name": "ApiGateway", "description": "REST gateway with rate limiting, JWT auth, and Postgres written in Python and FastAPI."}}
             ]
         }}
