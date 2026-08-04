@@ -162,7 +162,9 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
                 {{"name": "DocSearch", "description": "Internal document Q&A
                 platform using RAG with LangChain, FAISS,
                 and HuggingFace embeddings."}},
-                {{"name": "ApiGateway", "description": "REST gateway with rate limiting, JWT auth, and Postgres written in Python and FastAPI."}}
+                {{"name": "ApiGateway", "description": "REST gateway with
+                rate limiting, JWT auth, and Postgres written in Python
+                and FastAPI."}}
             ]
         }}
 
