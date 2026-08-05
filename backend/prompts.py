@@ -171,7 +171,8 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
         # RULES (STRICT)
 
         - JOB POSITION must come from the job description, not invented.
-        - SUMMARY must start exactly with "with experience in " — no other prefix.
+        - SUMMARY must start exactly with "with experience in "
+          no other prefix.
         - SUMMARY must NOT mention or paraphrase the job title.
         - EXPERIENCE must contain EXACTLY 3 items — never 2, never 4.
         - Each EXPERIENCE description must include at least 2 concrete
