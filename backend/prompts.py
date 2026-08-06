@@ -179,7 +179,8 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
           technologies (languages, frameworks, or services).
         - Each EXPERIENCE description must convey what the program does
           (its purpose), not just the tech stack.
-        - Only state facts verified through tools. Omit anything you cannot verify.
+        - Only state facts verified through tools.
+          Omit anything you cannot verify.
         - Never invent dates, employer names, certifications, or metrics.
         - Output must be valid JSON. No markdown code fences, no extra text.
 
