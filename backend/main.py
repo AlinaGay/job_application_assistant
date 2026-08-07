@@ -27,6 +27,7 @@ from utils import clean_cover_letter, find_placeholders, scrape_url
 
 load_dotenv()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage application startup and shutdown lifecycle."""
