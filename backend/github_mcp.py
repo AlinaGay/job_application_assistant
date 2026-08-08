@@ -1,4 +1,20 @@
 # github_mcp.py
+"""FastMCP server exposing the candidate's GitHub projects as agent tools.
+
+Runs as a stdio subprocess spawned by the RAG service and provides tools
+for listing repositories, fetching READMEs, and inspecting language stats.
+The cover letter agent uses these tools to ground its output in real
+projects instead of relying on the resume alone.
+
+Requires the GH_TOKEN environment variable (loaded from .env) — a GitHub
+Personal Access Token with `repo` or `public_repo` scope.
+
+Exposed tools:
+    repos_list          — list non-fork, non-archived repositories
+    get_readme          — fetch raw README content for a given repo
+    get_repo_languages  — get language byte-count breakdown for a given repo
+    get_repo_tech_stack — combine README excerpt and language stats
+"""
 
 import os
 import requests
