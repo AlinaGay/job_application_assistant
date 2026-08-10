@@ -1,4 +1,5 @@
 # tests/create_test_pdf.py
+
 from reportlab.pdfgen import canvas
 
 c = canvas.Canvas("tests/fixtures/test_resume.pdf")
