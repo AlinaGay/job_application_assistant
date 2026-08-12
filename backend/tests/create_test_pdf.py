@@ -1,4 +1,4 @@
-# tests/create_test_pdf.py
+# create_test_pdf.py
 
 from reportlab.pdfgen import canvas
 
