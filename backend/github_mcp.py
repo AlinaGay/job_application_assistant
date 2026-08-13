@@ -1,4 +1,5 @@
 # github_mcp.py
+
 """FastMCP server exposing the candidate's GitHub projects as agent tools.
 
 Runs as a stdio subprocess spawned by the RAG service and provides tools
