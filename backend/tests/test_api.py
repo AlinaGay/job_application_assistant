@@ -1,5 +1,7 @@
 # test_api.py
 
+"""Integration tests for FastAPI endpoints via ASGI transport."""
+
 import pytest
 from httpx import AsyncClient, ASGITransport
 from main import app
