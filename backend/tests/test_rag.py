@@ -1,5 +1,7 @@
 # test_rag.py
 
+"""RAG tests."""
+
 import os
 import pytest
 from rag import (
