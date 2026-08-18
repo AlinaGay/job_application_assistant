@@ -6,8 +6,6 @@ Covers document indexing (resume, about_me), URL scraping
 and cover letter post-processing.
 """
 
-import os
-import pytest
 from rag import (
     clean_cover_letter,
     process_about_me,
