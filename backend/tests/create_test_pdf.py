@@ -1,7 +1,6 @@
 # create_test_pdf.py
 
 """Generate a sample PDF resume fixture for tests.
-
 Writes tests/fixtures/test_resume.pdf with a couple of lines of text.
 Run manually when the fixture needs to be recreated.
 """
