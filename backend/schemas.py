@@ -18,7 +18,7 @@ class ExperienceItem(BaseModel):
 
 
 class FilledResume(BaseModel):
-    """Validated LLM output used to placeholders in the resume template."""
+    """Validated LLM output used to fill placeholders in the template."""
 
     job_position: Annotated[
         str, Field(alias="JOB POSITION", min_length=1, max_length=80)]

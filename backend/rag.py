@@ -207,7 +207,7 @@ class RAGService:
             }
 
         return {
-            "error": "Failed validation after etries",
+            "error": "Failed validation after retries",
             "last_feedback": feedback
         }
 
