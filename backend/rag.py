@@ -187,7 +187,7 @@ class RAGService:
 
             start = raw.find("{")
             end = raw.rfind("}") + 1
-            if start != -1 and end <= start:
+            if start == -1 or end <= start:
                 feedback = "No JSON object found in agent response."
                 continue
 
