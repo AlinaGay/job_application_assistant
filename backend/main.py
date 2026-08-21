@@ -48,24 +48,26 @@ app.add_middleware(
 async def upload_resume(file: UploadFile = File(...)):
     """Save uploaded resume PDF and index it into the RAG vector store."""
     os.makedirs(UPLOAD_DIR, exist_ok=True)
-    file_path = os.path.join(UPLOAD_DIR, os.path.basename(file.filename))
+    filename = os.path.basename(file.filename)
+    file_path = os.path.join(UPLOAD_DIR, filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
     chunks_count = rag_service.process_resume(file_path)
-    return {"filename": file.filename, "chunks": chunks_count}
+    return {"filename": filename, "chunks": chunks_count}
 
 
 @app.post("/upload_about_me/")
 async def upload_about_me(file: UploadFile = File(...)):
     """Save uploaded about_me and index it into the RAG vector store."""
     os.makedirs(UPLOAD_DIR, exist_ok=True)
-    file_path = os.path.join(UPLOAD_DIR, os.path.basename(file.filename))
+    filename = os.path.basename(file.filename)
+    file_path = os.path.join(UPLOAD_DIR, filename)
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
     chunks_count = rag_service.process_about_me(file_path)
-    return {"filename": file.filename, "chunks": chunks_count}
+    return {"filename": filename, "chunks": chunks_count}
 
 
 @app.post("/scrape/")
@@ -152,7 +154,7 @@ async def upload_template(file: UploadFile = File(...)):
 
     placeholders = find_placeholders(file_path)
     return {
-        "filename": file.filename,
+        "filename": os.path.basename(file.filename),
         "placeholders": placeholders
     }
 

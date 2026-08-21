@@ -1,5 +1,5 @@
 # --- web ---
-fastapi
+fastapi==0.115.*
 uvicorn[standard]
 python-multipart
 python-dotenv
@@ -25,7 +25,7 @@ sentence-transformers
 fastmcp
 langchain-mcp-adapters
 
-# --- dev tools (по желанию, можно вынести в requirements-dev.txt) ---
+# --- dev tools ---
 flake8
 flake8-docstrings
 isort
