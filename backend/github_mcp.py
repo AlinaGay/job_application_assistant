@@ -18,11 +18,13 @@ Exposed tools:
 """
 
 import os
+from functools import lru_cache
+
 import requests
-from config import GITHUB
 from dotenv import load_dotenv
 from fastmcp import FastMCP
-from functools import lru_cache
+
+from config import GITHUB
 
 
 load_dotenv()
@@ -42,7 +44,7 @@ def _headers(raw: bool = False) -> dict:
 
 @lru_cache(maxsize=1)
 def _username() -> str:
-    """Get authenticated user's login(cached for the process lifetime)."""
+    """Get authenticated user's login (cached for the process lifetime)."""
     response = requests.get(f"{GITHUB}/user", headers=_headers(), timeout=10)
     response.raise_for_status()
     return response.json()["login"]
