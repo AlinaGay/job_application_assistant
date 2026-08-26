@@ -11,7 +11,7 @@ import shutil
 
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from reportlab.lib.pagesizes import A4
@@ -152,6 +152,8 @@ async def upload_template(file: UploadFile = File(...)):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
+    if file.filename is None:
+        raise HTTPException(status_code=400, detail="No filename provided")
     placeholders = find_placeholders(file_path)
     return {
         "filename": os.path.basename(file.filename),

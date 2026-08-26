@@ -76,10 +76,11 @@ def _fetch_languages(repo_name: str) -> dict:
 @mcp.tool
 def repos_list(limit: int = 30) -> list[dict]:
     """List candidate's original (non-fork) repositories with READMEs."""
+    params: dict[str, str | int] = {"per_page": 100, "sort": "updated"}
     response = requests.get(
         f"{GITHUB}/users/{_username()}/repos",
         headers=_headers(),
-        params={"per_page": 100, "sort": "updated"},
+        params=params,
         timeout=10
     )
     response.raise_for_status()

@@ -11,6 +11,7 @@ import os
 import sys
 
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
+from langchain_core.document_loaders import BaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import ChatOllama
@@ -69,6 +70,7 @@ class RAGService:
 
     def _load_and_split(self, file_path: str):
         """Load a PDF or TXT file and split into chunks."""
+        loader: BaseLoader
         if file_path.endswith(".pdf"):
             loader = PyPDFLoader(file_path)
         else:
