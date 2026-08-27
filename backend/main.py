@@ -61,6 +61,8 @@ async def upload_resume(file: UploadFile = File(...)):
 async def upload_about_me(file: UploadFile = File(...)):
     """Save uploaded about_me and index it into the RAG vector store."""
     os.makedirs(UPLOAD_DIR, exist_ok=True)
+    if file.filename is None:
+        raise HTTPException(status_code=400, detail="No filename provided")
     filename = os.path.basename(file.filename)
     file_path = os.path.join(UPLOAD_DIR, filename)
     with open(file_path, "wb") as buffer:
