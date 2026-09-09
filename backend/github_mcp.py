@@ -18,9 +18,10 @@ Exposed tools:
 """
 
 import os
-from functools import lru_cache
-
+import json
 import requests
+from functools import lru_cache
+from pathlib import Path
 from dotenv import load_dotenv
 from fastmcp import FastMCP
 
@@ -29,6 +30,15 @@ from config import GITHUB
 load_dotenv()
 
 mcp = FastMCP("github-projects")
+
+PROJECTS = [
+    "job_application_assistant",
+    "foodgram",
+    "async-yacut",
+    "bulls_cows",
+    "homework-bot",
+    "gpt_adviser"
+]
 
 
 def _headers(raw: bool = False) -> dict:
@@ -120,4 +130,15 @@ def get_repo_tech_stack(repo_name: str) -> dict:
 
 
 if __name__ == "__main__":
-    mcp.run()
+    import json
+    print("=== repos_list ===")
+    repos = repos_list(limit=5)
+    print(json.dumps(repos, indent=2, ensure_ascii=False))
+
+    if repos:
+        name = repos[0]["name"]
+        print(f"\n=== get_repo_languages({name}) ===")
+        print(_fetch_languages(name))
+
+        print(f"\n=== get_readme({name}) — первые 300 символов ===")
+        print(_fetch_readme(name)[:300])
