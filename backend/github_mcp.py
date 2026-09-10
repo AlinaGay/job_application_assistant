@@ -59,17 +59,45 @@ def _username() -> str:
     return response.json()["login"]
 
 
-def _fetch_readme(repo_name: str) -> str:
-    """Fetch raw README content; returns '' on 404."""
-    r = requests.get(
-        f"{GITHUB}/repos/{_username()}/{repo_name}/readme",
+def _fetch_from_github(repo_name: str) -> dict:
+    """Fetch full metadata, languages, and the COMPLETE README for one repo."""
+    owner = _username()
+    meta = requests.get(
+        f"{GITHUB}/repos/{owner}/{repo_name}",
+        headers=_headers(),
+        timeout=10,
+    )
+    meta.raise_for_status()
+    meta_json = meta.json()
+
+    readme_resp = requests.get(
+        f"{GITHUB}/repos/{owner}/{repo_name}/readme",
         headers=_headers(raw=True),
         timeout=10,
     )
-    if r.status_code == 404:
-        return ""
-    r.raise_for_status()
-    return r.text[:4000]
+    if readme_resp.status_code == 404:
+        readme = ""
+    else:
+        readme_resp.raise_for_status()
+        readme = readme_resp.text
+
+    langs = requests.get(
+        f"{GITHUB}/repos/{owner}/{repo_name}/languages",
+        headers=_headers(),
+        timeout=10,
+    )
+    langs.raise_for_status()
+
+    return {
+        "name": meta_json["name"],
+        "description": meta_json.get("description"),
+        "language": meta_json.get("language"),
+        "html_url": meta_json.get("html_url"),
+        "updated_at": meta_json.get("updated_at"),
+        "stargazers_count": meta_json.get("stargazers_count"),
+        "languages": langs.json(),
+        "readme": readme,
+    }
 
 
 def _fetch_languages(repo_name: str) -> dict:
