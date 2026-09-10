@@ -25,7 +25,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastmcp import FastMCP
 
-from config import GITHUB
+from config import GITHUB, UPLOAD_DIR
 
 load_dotenv()
 
@@ -39,6 +39,9 @@ PROJECTS = [
     "homework-bot",
     "gpt_adviser"
 ]
+
+CACHE_DIR = Path(UPLOAD_DIR) / "project_docs"
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def _headers(raw: bool = False) -> dict:
@@ -100,15 +103,8 @@ def _fetch_from_github(repo_name: str) -> dict:
     }
 
 
-def _fetch_languages(repo_name: str) -> dict:
-    """Fetch language byte counts for a repo."""
-    r = requests.get(
-        f"{GITHUB}/repos/{_username()}/{repo_name}/languages",
-        headers=_headers(),
-        timeout=10,
-    )
-    r.raise_for_status()
-    return r.json()
+def _cache_path(repo_name: str) -> Path:
+    return CACHE_DIR / f"{repo_name}.json"
 
 
 @mcp.tool
