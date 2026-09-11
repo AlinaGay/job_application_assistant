@@ -107,6 +107,22 @@ def _cache_path(repo_name: str) -> Path:
     return CACHE_DIR / f"{repo_name}.json"
 
 
+def _write_markdown(data: dict) -> None:
+    """Write a human/RAG-readable document with the full project write-up."""
+    langs = ", ".join(data["languages"].keys()) or "-"
+    md = (
+        f"# {data['name']}\n\n"
+        f"**Description:** {data.get('description') or '—'}\n\n"
+        f"**Primary language:** {data.get('language') or '—'}\n\n"
+        f"**Languages:** {langs}\n\n"
+        f"**URL:** {data.get('html_url') or '—'}\n\n"
+        f"**Last updated:** {data.get('updated_at') or '—'}\n\n"
+        "---\n\n"
+        f"{data['readme'] or '_No README available._'}\n"
+    )
+    (CACHE_DIR / f"{data['name']}.md").write_text(md, encoding="utf-8")
+
+
 @mcp.tool
 def repos_list(limit: int = 30) -> list[dict]:
     """List candidate's original (non-fork) repositories with READMEs."""
