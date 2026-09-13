@@ -123,6 +123,31 @@ def _write_markdown(data: dict) -> None:
     (CACHE_DIR / f"{data['name']}.md").write_text(md, encoding="utf-8")
 
 
+def _get_project(repo_name: str, force_refresh: bool = False) -> dict:
+    """Return a project's full document.
+
+    Reads from the local cache if present; only contacts GitHub when the
+    project has never been cached, or when force_refresh is True.
+    """
+    if repo_name not in PROJECTS:
+        raise ValueError(
+            f"'{repo_name}' is not in the allowed PROJECTS list. "
+            f"Available projects: {', '.join(PROJECTS)}"
+        )
+
+    path = _cache_path(repo_name)
+    if path.exists() and not force_refresh:
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    data = _fetch_from_github(repo_name)
+    path.write_text(
+        json.dumps(data, ensure_ascii=False, indent=2),
+        encoding="utf-8"
+    )
+    _write_markdown(data)
+    return data
+
+
 @mcp.tool
 def repos_list(limit: int = 30) -> list[dict]:
     """List candidate's original (non-fork) repositories with READMEs."""
