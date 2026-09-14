@@ -149,6 +149,12 @@ def _get_project(repo_name: str, force_refresh: bool = False) -> dict:
 
 
 @mcp.tool
+def list_projects() -> list[str]:
+    """List the curated project names the agent is allowed to retrieve."""
+    return PROJECTS
+
+
+@mcp.tool
 def repos_list(limit: int = 30) -> list[dict]:
     """List candidate's original (non-fork) repositories with READMEs."""
     params: dict[str, str | int] = {"per_page": 100, "sort": "updated"}
