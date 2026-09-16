@@ -165,28 +165,9 @@ def get_project(repo_name: str) -> dict:
 
 
 @mcp.tool
-def repos_list(limit: int = 30) -> list[dict]:
-    """List candidate's original (non-fork) repositories with READMEs."""
-    params: dict[str, str | int] = {"per_page": 100, "sort": "updated"}
-    response = requests.get(
-        f"{GITHUB}/users/{_username()}/repos",
-        headers=_headers(),
-        params=params,
-        timeout=10
-    )
-    response.raise_for_status()
-    repos = [
-        {
-            "name": repo["name"],
-            "description": repo["description"],
-            "language": repo["language"],
-            "updated_at": repo["updated_at"],
-            "stargazers_count": repo["stargazers_count"],
-        }
-        for repo in response.json()
-        if not repo["fork"] and not repo["archived"]
-    ]
-    return repos[:limit]
+def refresh_project(repo_name: str) -> dict:
+    """Force a fresh fetch from GitHub, overwriting the local cache."""
+    return _get_project(repo_name, force_refresh=True)
 
 
 @mcp.tool
