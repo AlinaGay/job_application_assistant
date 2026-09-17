@@ -171,24 +171,17 @@ def refresh_project(repo_name: str) -> dict:
 
 
 @mcp.tool
-def get_readme(repo_name: str) -> str:
-    """Fetch README content of a given repo by name."""
-    return _fetch_readme(repo_name)
+def sync_all() -> list[str]:
+    """Fetch every curated project that is not yet cached.
 
-
-@mcp.tool
-def get_repo_languages(repo_name: str) -> dict:
-    """Get languages and their byte-count for a given repo."""
-    return _fetch_languages(repo_name)
-
-
-@mcp.tool
-def get_repo_tech_stack(repo_name: str) -> dict:
-    """Extract probable tech stack from README and language stats."""
-    return {
-        "languages": _fetch_languages(repo_name),
-        "readme_excerpt": _fetch_readme(repo_name)[:2000]
-    }
+    Returns the names of the projects that were actually fetched.
+    """
+    fetched = []
+    for name in PROJECTS:
+        if not _cache_path(name).exists():
+            _get_project(name)
+            fetched.append(name)
+    return fetched
 
 
 if __name__ == "__main__":
