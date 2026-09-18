@@ -185,15 +185,4 @@ def sync_all() -> list[str]:
 
 
 if __name__ == "__main__":
-    import json
-    print("=== repos_list ===")
-    repos = repos_list(limit=5)
-    print(json.dumps(repos, indent=2, ensure_ascii=False))
-
-    if repos:
-        name = repos[0]["name"]
-        print(f"\n=== get_repo_languages({name}) ===")
-        print(_fetch_languages(name))
-
-        print(f"\n=== get_readme({name}) — первые 300 символов ===")
-        print(_fetch_readme(name)[:300])
+    mcp.run()
