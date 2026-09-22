@@ -156,11 +156,7 @@ def list_projects() -> list[str]:
 
 @mcp.tool
 def get_project(repo_name: str) -> dict:
-    """Get full info (metadata, languages, complete README) for one project.
-
-    Cache-first: reads the local document if it exists, and only calls
-    GitHub the first time this project is requested.
-    """
+    """Get full info (metadata, languages, complete README) for one project."""
     return _get_project(repo_name)
 
 
