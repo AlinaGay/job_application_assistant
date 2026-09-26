@@ -1,4 +1,24 @@
 # tests/test_cache_offline.py
+"""Offline unit test for the GitHub project caching logic.
+
+Exercises the cache-first behaviour of github_mcp without any network
+access, GitHub token, or running project. The real GitHub call
+(_fetch_from_github) is monkey-patched with a stub returning fixed data,
+so the test isolates and verifies only the local caching logic:
+
+    * sync_all fetches a project the first time and writes it to disk;
+    * a second sync_all returns an empty list (nothing re-fetched),
+      proving the cache is used instead of GitHub;
+    * get_project reads the stored document back from disk;
+    * the full README is preserved (not truncated).
+
+Note: with the default CACHE_DIR this writes demo files into the real
+uploads/project_docs folder. Point github_mcp.CACHE_DIR at a temp dir
+(or use pytest's tmp_path) to keep the test fully self-contained.
+
+Run from the backend directory:
+    python3 -m tests.test_cache_offline
+"""
 
 import github_mcp
 
