@@ -1,4 +1,5 @@
 # test_mcp.py
+
 """Integration (smoke) test for the GitHub MCP server.
 
 Verifies that the FastMCP server wires up correctly and is usable by an
