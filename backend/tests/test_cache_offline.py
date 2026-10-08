@@ -1,4 +1,5 @@
 # tests/test_cache_offline.py
+
 """Offline unit test for the GitHub project caching logic.
 
 Exercises the cache-first behaviour of github_mcp without any network
