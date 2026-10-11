@@ -23,14 +23,14 @@ Use these tools to gather information BEFORE writing. Do not skip this step.
   experience
   • retrieve_about_me(query)     — search the candidate's personal motivations,
   stories and values
-  • repos_list(limit)            — list the candidate's GitHub repositories
+  • list_projects(limit)            — list the candidate's GitHub repositories
   • get_readme(repo_name)        — fetch README of a specific repo
   • get_repo_languages(repo_name)— get language breakdown of a repo
 
 REQUIRED WORKFLOW
 1. Call retrieve_about_me with a query tied to the company's mission/values.
 2. Call retrieve_resume to confirm relevant experience for the role.
-3. Call repos_list to see what the candidate has built.
+3. Call list_projects to see what the candidate has built.
 4. Pick 1-2 repos whose name/description/language best match the job. \
 For those, call get_readme to learn what was actually built and why.
 5. Write the letter. Reference at most ONE concrete project as proof
@@ -88,7 +88,7 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
 
         • retrieve_resume(query) — search the candidate's uploaded CV for
           skills, background, education, and personal details.
-        • repos_list(limit) — list the candidate's GitHub repositories.
+        • list_projects(limit) — list the candidate's GitHub repositories.
         • get_readme(repo_name) — fetch README of a specific repository.
         • get_repo_languages(repo_name) — get language breakdown
           for a repository.
@@ -116,7 +116,7 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
            - 2–3 sentences total, ~50–70 words.
 
         4. Fill EXPERIENCE:
-           - Call repos_list to list all repositories.
+           - Call list_projects to list all repositories.
            - Score each repo against the extracted skills from step 1.
              Higher score = more matching technologies and a similar domain.
            - Select EXACTLY 3 repositories with the highest scores.
