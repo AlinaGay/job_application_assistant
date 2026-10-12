@@ -24,7 +24,7 @@ Use these tools to gather information BEFORE writing. Do not skip this step.
   • retrieve_about_me(query)     — search the candidate's personal motivations,
   stories and values
   • list_projects(limit)            — list the candidate's GitHub repositories
-  • get_readme(repo_name)        — fetch README of a specific repo
+  • get_project(repo_name)        — fetch README of a specific repo
   • get_repo_languages(repo_name)— get language breakdown of a repo
 
 REQUIRED WORKFLOW
@@ -32,7 +32,7 @@ REQUIRED WORKFLOW
 2. Call retrieve_resume to confirm relevant experience for the role.
 3. Call list_projects to see what the candidate has built.
 4. Pick 1-2 repos whose name/description/language best match the job. \
-For those, call get_readme to learn what was actually built and why.
+For those, call get_project to learn what was actually built and why.
 5. Write the letter. Reference at most ONE concrete project as proof
 of motivation, \not as a CV bullet. The project should illustrate
 alignment with the company, not list features.
@@ -89,7 +89,7 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
         • retrieve_resume(query) — search the candidate's uploaded CV for
           skills, background, education, and personal details.
         • list_projects(limit) — list the candidate's GitHub repositories.
-        • get_readme(repo_name) — fetch README of a specific repository.
+        • get_project(repo_name) — fetch README of a specific repository.
         • get_repo_languages(repo_name) — get language breakdown
           for a repository.
 
@@ -120,7 +120,7 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
            - Score each repo against the extracted skills from step 1.
              Higher score = more matching technologies and a similar domain.
            - Select EXACTLY 3 repositories with the highest scores.
-           - For each selected repo, call get_readme and get_repo_languages
+           - For each selected repo, call get_project and get_repo_languages
              to gather facts.
            - For each project, produce an object with:
              - "name": the repository name (will be rendered in bold).
