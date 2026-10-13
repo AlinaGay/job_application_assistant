@@ -25,7 +25,7 @@ Use these tools to gather information BEFORE writing. Do not skip this step.
   stories and values
   • list_projects(limit)            — list the candidate's GitHub repositories
   • get_project(repo_name)        — fetch README of a specific repo
-  • get_repo_languages(repo_name)— get language breakdown of a repo
+  • get_project(repo_name)— get language breakdown of a repo
 
 REQUIRED WORKFLOW
 1. Call retrieve_about_me with a query tied to the company's mission/values.
@@ -90,7 +90,7 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
           skills, background, education, and personal details.
         • list_projects(limit) — list the candidate's GitHub repositories.
         • get_project(repo_name) — fetch README of a specific repository.
-        • get_repo_languages(repo_name) — get language breakdown
+        • get_project(repo_name) — get language breakdown
           for a repository.
 
         # PROCESS
@@ -120,8 +120,7 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
            - Score each repo against the extracted skills from step 1.
              Higher score = more matching technologies and a similar domain.
            - Select EXACTLY 3 repositories with the highest scores.
-           - For each selected repo, call get_project and get_repo_languages
-             to gather facts.
+           - For each selected repo, call get_project to gather facts.
            - For each project, produce an object with:
              - "name": the repository name (will be rendered in bold).
              - "description": ONE sentence (15–25 words) that includes
