@@ -83,12 +83,10 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
 
         Call these tools BEFORE writing. Do not invent any facts.
 
-        • retrieve_resume(query) — search the candidate's uploaded CV for
-          skills, background, education, and personal details.
-        • list_projects(limit) — list the candidate's GitHub repositories.
-        • get_project(repo_name) — fetch README of a specific repository.
-        • get_project(repo_name) — get language breakdown
-          for a repository.
+        - retrieve_resume(query) — search the candidate's uploaded CV.
+        - list_projects() — list the candidate's project names.
+        - get_project(repo_name) — full info for one project: description,
+          language breakdown, and the complete README.
 
         # PROCESS
 
