@@ -111,16 +111,12 @@ def template_fill_prompt(job_text: str, placeholders: list[str]) -> str:
            - 2–3 sentences total, ~50–70 words.
 
         4. Fill EXPERIENCE:
-           - Call list_projects to list all repositories.
-           - Score each repo against the extracted skills from step 1.
-             Higher score = more matching technologies and a similar domain.
-           - Select EXACTLY 3 repositories with the highest scores.
-           - For each selected repo, call get_project to gather facts.
-           - For each project, produce an object with:
-             - "name": the repository name (will be rendered in bold).
-             - "description": ONE sentence (15–25 words) that includes
-               (a) what the program does (the purpose, not the implementation),
-               and (b) the key technologies used. Use action verbs.
+           - Call list_projects to get all project names.
+           - For the most relevant-looking names, call get_project to read the
+             description, languages, and README, and score them against the
+             skills extracted in step 1.
+           - Select EXACTLY 3 projects with the highest scores.
+           - Use the description and languages from get_project as your facts.
 
         5. Return ONLY a JSON object — no preamble, no markdown fences,
            no commentary.
